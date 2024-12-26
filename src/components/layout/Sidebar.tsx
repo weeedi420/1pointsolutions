@@ -8,6 +8,8 @@ import {
   Search,
   Settings,
   LogOut,
+  Users,
+  LineChart,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -19,14 +21,21 @@ const Sidebar = () => {
     { icon: MessageSquare, label: "Content Generator", path: "/content" },
     { icon: Image, label: "Image Tools", path: "/images" },
     { icon: Search, label: "Keyword Research", path: "/keywords" },
+    { icon: Users, label: "Social Analysis", path: "/social" },
+    { icon: LineChart, label: "Analytics", path: "/analytics" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-marketing-700">Marketing Hub</h1>
+      <div className="p-6 flex items-center gap-3">
+        <img
+          src="/lovable-uploads/5009b14b-9440-44ac-9a59-349216deb793.png"
+          alt="1Point Solutions"
+          className="h-8 w-8"
+        />
+        <h1 className="text-xl font-bold text-[#0FA0CE]">1Point Solutions</h1>
       </div>
       
       <nav className="flex-1 px-4">
@@ -37,8 +46,8 @@ const Sidebar = () => {
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-md mb-1 transition-colors",
               isActive(item.path)
-                ? "bg-marketing-50 text-marketing-700"
-                : "text-gray-600 hover:bg-gray-50"
+                ? "bg-[#0FA0CE]/10 text-[#0FA0CE]"
+                : "text-[#222222] hover:bg-gray-50"
             )}
           >
             <item.icon className="h-5 w-5" />
@@ -50,12 +59,12 @@ const Sidebar = () => {
       <div className="p-4 border-t border-gray-200">
         <Link
           to="/settings"
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50"
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-[#222222] hover:bg-gray-50"
         >
           <Settings className="h-5 w-5" />
           <span>Settings</span>
         </Link>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50 w-full">
+        <button className="flex items-center gap-3 px-3 py-2 rounded-md text-[#222222] hover:bg-gray-50 w-full">
           <LogOut className="h-5 w-5" />
           <span>Logout</span>
         </button>
