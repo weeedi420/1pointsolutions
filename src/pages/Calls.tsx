@@ -1,7 +1,11 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
-import { Phone, Clock, UserCheck } from "lucide-react";
+import { Phone, Clock, UserCheck, Plus, PhoneCall } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const VAPI_API_KEY = "3fa8e663-5960-4fb6-9637-ac96e864a340";
 
@@ -11,12 +15,19 @@ interface CallData {
   leadGenerated: number;
 }
 
+interface PhoneNumber {
+  id: string;
+  number: string;
+  status: "active" | "pending";
+}
+
 const Calls = () => {
+  const [areaCode, setAreaCode] = useState("");
+  const { toast } = useToast();
+  
   const { data: callStats, isLoading } = useQuery({
     queryKey: ['callStats'],
     queryFn: async (): Promise<CallData> => {
-      // This is a placeholder for the actual Vapi API call
-      // We'll implement the full API integration in the next iteration
       console.log("Using Vapi API Key:", VAPI_API_KEY);
       return {
         totalCalls: 125,
@@ -25,6 +36,52 @@ const Calls = () => {
       };
     },
   });
+
+  const { data: phoneNumbers = [], refetch: refetchPhoneNumbers } = useQuery({
+    queryKey: ['phoneNumbers'],
+    queryFn: async (): Promise<PhoneNumber[]> => {
+      // This will be replaced with actual Vapi API call
+      return [
+        { id: "1", number: "+1 (555) 123-4567", status: "active" },
+        { id: "2", number: "+1 (555) 987-6543", status: "active" },
+      ];
+    },
+  });
+
+  const handlePurchaseNumber = async () => {
+    if (!areaCode.match(/^\d{3}$/)) {
+      toast({
+        title: "Invalid Area Code",
+        description: "Please enter a valid 3-digit area code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // This will be replaced with actual Vapi API call
+      toast({
+        title: "Purchasing Number",
+        description: "Please wait while we process your request...",
+      });
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: "Success!",
+        description: "Phone number purchased successfully",
+      });
+      
+      refetchPhoneNumbers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to purchase phone number. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const stats = [
     {
@@ -75,6 +132,55 @@ const Calls = () => {
             </Card>
           ))}
         </div>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Phone Numbers</CardTitle>
+            <div className="flex items-center gap-4">
+              <Input
+                placeholder="Area code (e.g. 415)"
+                className="w-40"
+                value={areaCode}
+                onChange={(e) => setAreaCode(e.target.value)}
+                maxLength={3}
+              />
+              <Button onClick={handlePurchaseNumber}>
+                <Plus className="mr-2 h-4 w-4" />
+                Purchase Number
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {phoneNumbers.map((number) => (
+                <div
+                  key={number.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <PhoneCall className="h-5 w-5 text-[#0FA0CE]" />
+                    <span className="font-medium">{number.number}</span>
+                    <span className={`text-sm px-2 py-1 rounded-full ${
+                      number.status === 'active' 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {number.status}
+                    </span>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    Configure
+                  </Button>
+                </div>
+              ))}
+              {phoneNumbers.length === 0 && (
+                <div className="text-center text-gray-500 py-8">
+                  No phone numbers found. Purchase your first number above.
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
