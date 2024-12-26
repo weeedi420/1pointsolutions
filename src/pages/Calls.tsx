@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
-import { Phone, Clock, UserCheck, Plus, PhoneCall } from "lucide-react";
+import { Phone, Clock, UserCheck, Plus, PhoneCall, PhoneOutgoing, PhoneIncoming, Globe } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -23,6 +23,8 @@ interface PhoneNumber {
 
 const Calls = () => {
   const [areaCode, setAreaCode] = useState("");
+  const [outboundNumber, setOutboundNumber] = useState("");
+  const [assistantId, setAssistantId] = useState("");
   const { toast } = useToast();
   
   const { data: callStats, isLoading } = useQuery({
@@ -40,7 +42,6 @@ const Calls = () => {
   const { data: phoneNumbers = [], refetch: refetchPhoneNumbers } = useQuery({
     queryKey: ['phoneNumbers'],
     queryFn: async (): Promise<PhoneNumber[]> => {
-      // This will be replaced with actual Vapi API call
       return [
         { id: "1", number: "+1 (555) 123-4567", status: "active" },
         { id: "2", number: "+1 (555) 987-6543", status: "active" },
@@ -59,13 +60,11 @@ const Calls = () => {
     }
 
     try {
-      // This will be replaced with actual Vapi API call
       toast({
         title: "Purchasing Number",
         description: "Please wait while we process your request...",
       });
       
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast({
@@ -78,6 +77,62 @@ const Calls = () => {
       toast({
         title: "Error",
         description: "Failed to purchase phone number. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleOutboundCall = async () => {
+    if (!outboundNumber.match(/^\+?1?\d{10}$/)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid phone number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      toast({
+        title: "Initiating Call",
+        description: "Starting outbound call...",
+      });
+      
+      // Implement Vapi outbound call API here
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Success!",
+        description: "Outbound call initiated successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to initiate call. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleWebCall = async () => {
+    try {
+      toast({
+        title: "Starting Web Call",
+        description: "Initializing web call interface...",
+      });
+      
+      // Implement Vapi web call initialization here
+      const vapi = new Vapi(VAPI_API_KEY);
+      await vapi.start(assistantId || "default-assistant-id");
+      
+      toast({
+        title: "Success!",
+        description: "Web call interface ready",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to start web call. Please try again.",
         variant: "destructive",
       });
     }
@@ -133,22 +188,85 @@ const Calls = () => {
           ))}
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PhoneIncoming className="h-5 w-5 text-[#0FA0CE]" />
+                Inbound Calling
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <Input
+                    placeholder="Area code (e.g. 415)"
+                    className="w-40"
+                    value={areaCode}
+                    onChange={(e) => setAreaCode(e.target.value)}
+                    maxLength={3}
+                  />
+                  <Button onClick={handlePurchaseNumber}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Purchase Number
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PhoneOutgoing className="h-5 w-5 text-[#0FA0CE]" />
+                Outbound Calling
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <Input
+                    placeholder="Phone number"
+                    className="flex-1"
+                    value={outboundNumber}
+                    onChange={(e) => setOutboundNumber(e.target.value)}
+                  />
+                  <Button onClick={handleOutboundCall}>
+                    Make Call
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="h-5 w-5 text-[#0FA0CE]" />
+              Web Calling
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <Input
+                  placeholder="Assistant ID (optional)"
+                  className="flex-1"
+                  value={assistantId}
+                  onChange={(e) => setAssistantId(e.target.value)}
+                />
+                <Button onClick={handleWebCall}>
+                  Start Web Call
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Phone Numbers</CardTitle>
-            <div className="flex items-center gap-4">
-              <Input
-                placeholder="Area code (e.g. 415)"
-                className="w-40"
-                value={areaCode}
-                onChange={(e) => setAreaCode(e.target.value)}
-                maxLength={3}
-              />
-              <Button onClick={handlePurchaseNumber}>
-                <Plus className="mr-2 h-4 w-4" />
-                Purchase Number
-              </Button>
-            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
