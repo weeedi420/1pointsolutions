@@ -20,20 +20,11 @@ const Calls = () => {
     queryKey: ['callStats'],
     queryFn: async () => {
       try {
-        const response = await vapiClient.calls.list();
-        const calls = response.data || [];
-        
-        // Calculate statistics from calls
-        const totalCalls = calls.length;
-        const totalDuration = calls.reduce((acc, call) => acc + (call.duration || 0), 0);
-        const avgDuration = totalCalls > 0 ? Math.floor(totalDuration / totalCalls) : 0;
-        const minutes = Math.floor(avgDuration / 60);
-        const seconds = avgDuration % 60;
-        
+        // Since the Web SDK doesn't support listing calls, we'll return mock data
         return {
-          totalCalls,
-          averageDuration: `${minutes}:${seconds.toString().padStart(2, '0')}`,
-          leadGenerated: calls.filter(call => call.status === 'completed').length
+          totalCalls: 0,
+          averageDuration: "0:00",
+          leadGenerated: 0
         };
       } catch (error) {
         console.error('Error fetching call stats:', error);
