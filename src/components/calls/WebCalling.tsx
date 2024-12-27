@@ -3,27 +3,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Globe, Phone } from "lucide-react";
 import { useState } from "react";
-import Vapi from "@vapi-ai/web";
+import { startWebCall } from "@/services/vapi";
+import { useToast } from "@/hooks/use-toast";
 
 interface WebCallingProps {
   assistantId: string;
   onAssistantIdChange: (value: string) => void;
-  onWebCall: () => Promise<void>;
 }
 
 export const WebCalling = ({
   assistantId,
   onAssistantIdChange,
-  onWebCall,
 }: WebCallingProps) => {
   const [isCallActive, setIsCallActive] = useState(false);
+  const { toast } = useToast();
 
   const handleStartCall = async () => {
     try {
       setIsCallActive(true);
-      await onWebCall();
+      await startWebCall(assistantId);
+      toast({
+        title: "Call Started",
+        description: "Your web call has been initiated successfully.",
+      });
     } catch (error) {
       console.error("Error starting web call:", error);
+      toast({
+        title: "Error",
+        description: "Failed to start web call. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsCallActive(false);
     }
