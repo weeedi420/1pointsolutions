@@ -17,8 +17,8 @@ export const InboundCalling = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <PhoneIncoming className="h-5 w-5 text-[#0FA0CE]" />
+        <CardTitle className="flex items-center gap-2 text-2xl">
+          <PhoneIncoming className="h-6 w-6 text-[#0FA0CE]" />
           Inbound Calling
         </CardTitle>
       </CardHeader>
@@ -27,13 +27,16 @@ export const InboundCalling = ({
           <div className="flex items-center gap-4">
             <Input
               placeholder="Area code (e.g. 415)"
-              className="w-40"
+              className="flex-1"
               value={areaCode}
               onChange={(e) => onAreaCodeChange(e.target.value)}
               maxLength={3}
             />
-            <Button onClick={onPurchaseNumber}>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button 
+              onClick={onPurchaseNumber}
+              className="bg-[#0FA0CE] hover:bg-[#0FA0CE]/90 text-white px-6"
+            >
+              <Plus className="mr-2 h-5 w-5" />
               Purchase Number
             </Button>
           </div>
