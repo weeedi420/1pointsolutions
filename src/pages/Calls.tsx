@@ -1,5 +1,4 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -124,13 +123,16 @@ const Calls = () => {
       });
       
       const vapi = new Vapi(VAPI_API_KEY);
-      await vapi.start(assistantId || "default-assistant-id");
+      
+      // If no assistantId is provided, it will use the default assistant
+      await vapi.start(assistantId || undefined);
       
       toast({
         title: "Success!",
         description: "Web call interface ready",
       });
     } catch (error) {
+      console.error("Web call error:", error);
       toast({
         title: "Error",
         description: "Failed to start web call. Please try again.",
@@ -171,17 +173,6 @@ const Calls = () => {
         />
 
         <PhoneNumbersList phoneNumbers={phoneNumbers} />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Calls</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center text-gray-500 py-8">
-              Call history will be implemented in the next iteration
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </DashboardLayout>
   );
