@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CallStats } from "@/components/calls/CallStats";
 import { InboundCalling } from "@/components/calls/InboundCalling";
 import { OutboundCalling } from "@/components/calls/OutboundCalling";
@@ -29,25 +29,92 @@ const Calls = () => {
   const [assistantId, setAssistantId] = useState("");
   const { toast } = useToast();
   
-  const { data: callStats, isLoading } = useQuery({
+  // Initialize Vapi client
+  const vapi = new Vapi(VAPI_API_KEY);
+  
+  const { data: callStats, isLoading: isStatsLoading } = useQuery({
     queryKey: ['callStats'],
-    queryFn: async (): Promise<CallData> => {
-      console.log("Using Vapi API Key:", VAPI_API_KEY);
-      return {
-        totalCalls: 125,
-        averageDuration: "3:45",
-        leadGenerated: 45,
-      };
+    queryFn: async () => {
+      try {
+        // Fetch call statistics from Vapi API
+        const stats = await vapi.getCallStats();
+        return {
+          totalCalls: stats?.totalCalls || 0,
+          averageDuration: stats?.averageDuration || "0:00",
+          leadGenerated: stats?.leadGenerated || 0,
+        };
+      } catch (error) {
+        console.error("Error fetching call stats:", error);
+        return {
+          totalCalls: 0,
+          averageDuration: "0:00",
+          leadGenerated: 0,
+        };
+      }
     },
   });
 
   const { data: phoneNumbers = [], refetch: refetchPhoneNumbers } = useQuery({
     queryKey: ['phoneNumbers'],
-    queryFn: async (): Promise<PhoneNumber[]> => {
-      return [
-        { id: "1", number: "+1 (555) 123-4567", status: "active" },
-        { id: "2", number: "+1 (555) 987-6543", status: "active" },
-      ];
+    queryFn: async () => {
+      try {
+        // Fetch phone numbers from Vapi API
+        const numbers = await vapi.getPhoneNumbers();
+        return numbers.map((num: any) => ({
+          id: num.id,
+          number: num.phoneNumber,
+          status: num.status,
+        }));
+      } catch (error) {
+        console.error("Error fetching phone numbers:", error);
+        return [];
+      }
+    },
+  });
+
+  const purchaseNumberMutation = useMutation({
+    mutationFn: async (areaCode: string) => {
+      return await vapi.purchasePhoneNumber({ areaCode });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success!",
+        description: "Phone number purchased successfully",
+      });
+      refetchPhoneNumbers();
+      setAreaCode("");
+    },
+    onError: (error) => {
+      console.error("Error purchasing number:", error);
+      toast({
+        title: "Error",
+        description: "Failed to purchase phone number. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const outboundCallMutation = useMutation({
+    mutationFn: async (phoneNumber: string) => {
+      return await vapi.createCall({
+        phoneNumber,
+        direction: "outbound",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success!",
+        description: "Outbound call initiated successfully",
+      });
+      setOutboundNumber("");
+    },
+    onError: (error) => {
+      console.error("Error initiating call:", error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate call. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -61,27 +128,7 @@ const Calls = () => {
       return;
     }
 
-    try {
-      toast({
-        title: "Purchasing Number",
-        description: "Please wait while we process your request...",
-      });
-      
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Success!",
-        description: "Phone number purchased successfully",
-      });
-      
-      refetchPhoneNumbers();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to purchase phone number. Please try again.",
-        variant: "destructive",
-      });
-    }
+    purchaseNumberMutation.mutate(areaCode);
   };
 
   const handleOutboundCall = async () => {
@@ -94,25 +141,7 @@ const Calls = () => {
       return;
     }
 
-    try {
-      toast({
-        title: "Initiating Call",
-        description: "Starting outbound call...",
-      });
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Success!",
-        description: "Outbound call initiated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to initiate call. Please try again.",
-        variant: "destructive",
-      });
-    }
+    outboundCallMutation.mutate(outboundNumber);
   };
 
   const handleWebCall = async () => {
@@ -122,9 +151,6 @@ const Calls = () => {
         description: "Initializing web call interface...",
       });
       
-      const vapi = new Vapi(VAPI_API_KEY);
-      
-      // If no assistantId is provided, it will use the default assistant
       await vapi.start(assistantId || undefined);
       
       toast({
@@ -151,7 +177,7 @@ const Calls = () => {
           </p>
         </div>
 
-        <CallStats callStats={callStats} isLoading={isLoading} />
+        <CallStats callStats={callStats} isLoading={isStatsLoading} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InboundCalling
