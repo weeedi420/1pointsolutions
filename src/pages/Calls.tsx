@@ -6,6 +6,7 @@ import { OutboundCalling } from "@/components/calls/OutboundCalling";
 import { WebCalling } from "@/components/calls/WebCalling";
 import { PhoneNumbersList } from "@/components/calls/PhoneNumbersList";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import { vapiClient } from "@/services/vapi";
 
 const Calls = () => {
@@ -14,12 +15,32 @@ const Calls = () => {
   const [assistantId, setAssistantId] = useState("");
   const { toast } = useToast();
 
-  // Since Vapi Web SDK is primarily for web calling, we'll show placeholders for other features
-  const mockCallStats = {
-    totalCalls: 0,
-    averageDuration: "0:00",
-    leadGenerated: 0
-  };
+  // Fetch call statistics using react-query
+  const { data: callStats, isLoading: isLoadingStats } = useQuery({
+    queryKey: ['callStats'],
+    queryFn: async () => {
+      try {
+        const response = await vapiClient.calls.list();
+        const calls = response.data || [];
+        
+        // Calculate statistics from calls
+        const totalCalls = calls.length;
+        const totalDuration = calls.reduce((acc, call) => acc + (call.duration || 0), 0);
+        const avgDuration = totalCalls > 0 ? Math.floor(totalDuration / totalCalls) : 0;
+        const minutes = Math.floor(avgDuration / 60);
+        const seconds = avgDuration % 60;
+        
+        return {
+          totalCalls,
+          averageDuration: `${minutes}:${seconds.toString().padStart(2, '0')}`,
+          leadGenerated: calls.filter(call => call.status === 'completed').length
+        };
+      } catch (error) {
+        console.error('Error fetching call stats:', error);
+        throw error;
+      }
+    }
+  });
 
   const mockPhoneNumbers: { id: string; number: string; status: "active" | "pending" }[] = [];
 
@@ -49,7 +70,7 @@ const Calls = () => {
           </p>
         </div>
 
-        <CallStats callStats={mockCallStats} isLoading={false} />
+        <CallStats callStats={callStats} isLoading={isLoadingStats} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InboundCalling

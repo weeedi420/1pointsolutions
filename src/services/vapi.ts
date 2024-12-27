@@ -16,11 +16,22 @@ type VoiceType = {
   voiceId: string;
 };
 
+// Define the model type based on Vapi's supported models
+type VapiModel = "gpt-4" | "gpt-3.5-turbo" | "claude-2" | "claude-instant-1";
+
 export interface AssistantOptions {
   firstMessage?: string;
-  model?: string;
+  model?: VapiModel;
   voice?: VoiceType;
   transcriber?: DeepgramTranscriberType;
+}
+
+export interface Call {
+  id: string;
+  status: string;
+  duration: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const startWebCall = async (assistantId?: string, options?: AssistantOptions) => {
@@ -28,7 +39,7 @@ export const startWebCall = async (assistantId?: string, options?: AssistantOpti
     if (assistantId) {
       const assistantOverrides = options ? {
         firstMessage: options.firstMessage,
-        model: options.model,
+        model: options.model || "gpt-4",
         voice: options.voice,
         transcriber: {
           provider: "deepgram" as const,
@@ -39,10 +50,9 @@ export const startWebCall = async (assistantId?: string, options?: AssistantOpti
 
       await vapiClient.start(assistantId, assistantOverrides);
     } else {
-      // If no assistantId provided, create a temporary assistant
       const defaultOptions = {
         firstMessage: "Hello! How can I help you today?",
-        model: "gpt-4",
+        model: "gpt-4" as VapiModel,
         voice: {
           provider: "11labs" as const,
           voiceId: "rachel"
