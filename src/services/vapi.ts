@@ -16,15 +16,15 @@ type VoiceType = {
   voiceId: string;
 };
 
-// Define the model types based on Vapi's supported models
+// Define the model types based on Vapi's latest supported models
 type OpenAIModel = {
   provider: "openai";
-  model: "gpt-4" | "gpt-3.5-turbo";
+  model: "gpt-4-turbo-preview" | "gpt-4" | "gpt-3.5-turbo";
 };
 
 type AnthropicModel = {
   provider: "anthropic";
-  model: "claude-2" | "claude-instant-1";
+  model: "claude-3-opus-20240229" | "claude-3-sonnet-20240229" | "claude-3-haiku-20240307" | "claude-3-5-sonnet-20240620";
 };
 
 type ModelType = OpenAIModel | AnthropicModel;
@@ -51,7 +51,7 @@ export const startWebCall = async (assistantId?: string, options?: AssistantOpti
         firstMessage: options.firstMessage,
         model: options.model || {
           provider: "openai" as const,
-          model: "gpt-4" as const
+          model: "gpt-4-turbo-preview" as const
         },
         voice: options.voice,
         transcriber: {
@@ -67,7 +67,7 @@ export const startWebCall = async (assistantId?: string, options?: AssistantOpti
         firstMessage: "Hello! How can I help you today?",
         model: {
           provider: "openai" as const,
-          model: "gpt-4" as const
+          model: "gpt-4-turbo-preview" as const
         },
         voice: {
           provider: "11labs" as const,
