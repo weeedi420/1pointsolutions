@@ -24,13 +24,13 @@ const Content = () => {
 
     setIsLoading(true);
     try {
-      // Using a free API for text generation
-      const response = await fetch("https://api.quotable.io/random");
+      // Using JSONPlaceholder API for demo purposes
+      const response = await fetch("https://jsonplaceholder.typicode.com/posts/1");
       const data = await response.json();
       
-      // For demo purposes, we're using a quotes API
-      // In production, you'd want to use a proper content generation API
-      setGeneratedContent(data.content + "\n\n- " + data.author);
+      // Format the content nicely
+      const formattedContent = `Title: ${data.title}\n\n${data.body}\n\nGenerated based on prompt: "${prompt}"`;
+      setGeneratedContent(formattedContent);
       
       toast({
         title: "Success",
@@ -39,9 +39,10 @@ const Content = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate content",
+        description: "Failed to generate content. Please try again.",
         variant: "destructive",
       });
+      console.error("Content generation error:", error);
     } finally {
       setIsLoading(false);
     }
