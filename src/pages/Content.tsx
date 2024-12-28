@@ -19,6 +19,11 @@ const Content = () => {
     const savedApiKey = localStorage.getItem("gemini_api_key");
     if (savedApiKey) {
       setApiKey(savedApiKey);
+    } else {
+      // Set the default API key if none exists in localStorage
+      const defaultKey = "AIzaSyDeJrf5k7cukzfvW2gNvWBsWB-W3mSdmRM";
+      setApiKey(defaultKey);
+      localStorage.setItem("gemini_api_key", defaultKey);
     }
   }, []);
 
