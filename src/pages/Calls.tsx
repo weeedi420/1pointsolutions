@@ -7,7 +7,6 @@ import { WebCalling } from "@/components/calls/WebCalling";
 import { PhoneNumbersList } from "@/components/calls/PhoneNumbersList";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import { vapiClient } from "@/services/vapi";
 
 const Calls = () => {
   const [areaCode, setAreaCode] = useState("");
@@ -15,21 +14,15 @@ const Calls = () => {
   const [assistantId, setAssistantId] = useState("");
   const { toast } = useToast();
 
-  // Fetch call statistics using react-query
+  // Mock call statistics since the Web SDK doesn't support listing calls
   const { data: callStats, isLoading: isLoadingStats } = useQuery({
     queryKey: ['callStats'],
     queryFn: async () => {
-      try {
-        // Since the Web SDK doesn't support listing calls, we'll return mock data
-        return {
-          totalCalls: 0,
-          averageDuration: "0:00",
-          leadGenerated: 0
-        };
-      } catch (error) {
-        console.error('Error fetching call stats:', error);
-        throw error;
-      }
+      return {
+        totalCalls: 0,
+        averageDuration: "0:00",
+        leadGenerated: 0
+      };
     }
   });
 
