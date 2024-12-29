@@ -12,6 +12,16 @@ const Keywords = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  const generateKeywordPrompt = (keyword: string) => {
+    return `Generate a comprehensive list of 10 highly relevant SEO keywords and search terms related to "${keyword}". 
+    Include:
+    - Long-tail variations
+    - Related search terms
+    - Common questions people ask
+    - Commercial intent variations
+    Format each keyword on a new line.`;
+  };
+
   const searchKeywords = async () => {
     if (!keyword.trim()) {
       toast({
@@ -24,27 +34,59 @@ const Keywords = () => {
 
     setIsLoading(true);
     try {
-      // For demo purposes, we're generating mock related keywords
-      // In production, you'd want to use a keyword research API
-      const mockResults = [
-        keyword + " examples",
-        keyword + " tutorial",
-        keyword + " guide",
-        "best " + keyword,
-        keyword + " tips",
-      ];
+      const apiKey = localStorage.getItem("gemini_api_key");
+      if (!apiKey) {
+        toast({
+          title: "Error",
+          description: "Please set your Gemini API key in the Content Generator page",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: generateKeywordPrompt(keyword)
+              }]
+            }]
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
       
-      setResults(mockResults);
+      // Split the response into individual keywords and clean them up
+      const keywordList = generatedText
+        .split('\n')
+        .map(k => k.trim())
+        .filter(k => k && !k.startsWith('-')); // Remove empty lines and bullet points
+
+      setResults(keywordList);
+      
       toast({
         title: "Success",
-        description: "Keywords found successfully",
+        description: "Keywords generated successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to search keywords",
+        description: "Failed to generate keywords. Please check your API key and try again.",
         variant: "destructive",
       });
+      console.error("Keyword generation error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +98,7 @@ const Keywords = () => {
         <div>
           <h1 className="text-3xl font-bold text-[#222222]">Keyword Research</h1>
           <p className="text-gray-600 mt-2">
-            Find relevant keywords for your content
+            Generate relevant keywords using Google's Gemini AI
           </p>
         </div>
 
