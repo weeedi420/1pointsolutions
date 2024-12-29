@@ -6,38 +6,85 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Key } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const contentTypes = {
+  blog: {
+    label: "Blog Post",
+    prompt: "Write a comprehensive blog post about",
+  },
+  social: {
+    label: "Social Media Post",
+    prompt: "Create an engaging social media post about",
+  },
+  website: {
+    label: "Website Content",
+    prompt: "Generate professional website content about",
+  },
+  adCopy: {
+    label: "Ad Copy",
+    prompt: "Write compelling ad copy for",
+  }
+};
 
 const Content = () => {
   const [prompt, setPrompt] = useState("");
   const [generatedContent, setGeneratedContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [apiKey, setApiKey] = useState("");
+  const [contentType, setContentType] = useState("blog");
+  const [topic, setTopic] = useState("");
   const { toast } = useToast();
 
-  // Load API key from localStorage on component mount
   useEffect(() => {
     const savedApiKey = localStorage.getItem("gemini_api_key");
     if (savedApiKey) {
       setApiKey(savedApiKey);
     } else {
-      // Set the default API key if none exists in localStorage
       const defaultKey = "AIzaSyDeJrf5k7cukzfvW2gNvWBsWB-W3mSdmRM";
       setApiKey(defaultKey);
       localStorage.setItem("gemini_api_key", defaultKey);
     }
   }, []);
 
-  // Save API key to localStorage when it changes
   const handleApiKeyChange = (newKey: string) => {
     setApiKey(newKey);
     localStorage.setItem("gemini_api_key", newKey);
+  };
+
+  useEffect(() => {
+    if (topic && contentType) {
+      const selectedType = contentTypes[contentType as keyof typeof contentTypes];
+      setPrompt(`${selectedType.prompt} ${topic}. ${getAdditionalInstructions(contentType)}`);
+    }
+  }, [topic, contentType]);
+
+  const getAdditionalInstructions = (type: string) => {
+    switch (type) {
+      case "blog":
+        return "Include an introduction, 3-4 main points with subheadings, and a conclusion. Make it informative and engaging.";
+      case "social":
+        return "Keep it concise, include hashtags, and make it attention-grabbing. Optimize for engagement.";
+      case "website":
+        return "Focus on benefits, use clear headings, and maintain a professional tone. Include a call-to-action.";
+      case "adCopy":
+        return "Highlight unique selling points, create urgency, and include a clear call-to-action. Keep it persuasive and concise.";
+      default:
+        return "";
+    }
   };
 
   const generateContent = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
-        description: "Please enter a prompt",
+        description: "Please enter a topic and select a content type",
         variant: "destructive",
       });
       return;
@@ -132,12 +179,45 @@ const Content = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter your prompt
+                Content Type
+              </label>
+              <Select
+                value={contentType}
+                onValueChange={setContentType}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select content type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(contentTypes).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>
+                      {value.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Topic
+              </label>
+              <Input
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="Enter your topic..."
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Generated Prompt
               </label>
               <Textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Enter what kind of content you want to generate..."
+                placeholder="Your prompt will appear here..."
                 className="min-h-[100px]"
               />
             </div>
