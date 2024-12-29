@@ -8,7 +8,6 @@ import {
   Search,
   Settings,
   LogOut,
-  Users,
   LineChart,
 } from "lucide-react";
 
@@ -21,7 +20,6 @@ const Sidebar = () => {
     { icon: MessageSquare, label: "Content Generator", path: "/content" },
     { icon: Image, label: "Image Tools", path: "/images" },
     { icon: Search, label: "Keyword Research", path: "/keywords" },
-    { icon: Users, label: "Social Analysis", path: "/social" },
     { icon: LineChart, label: "Analytics", path: "/analytics" },
   ];
 

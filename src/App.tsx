@@ -8,7 +8,6 @@ import Calls from "./pages/Calls";
 import Content from "./pages/Content";
 import Images from "./pages/Images";
 import Keywords from "./pages/Keywords";
-import Social from "./pages/Social";
 import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
@@ -25,7 +24,6 @@ const App = () => (
           <Route path="/content" element={<Content />} />
           <Route path="/images" element={<Images />} />
           <Route path="/keywords" element={<Keywords />} />
-          <Route path="/social" element={<Social />} />
           <Route path="/analytics" element={<Analytics />} />
         </Routes>
       </BrowserRouter>
