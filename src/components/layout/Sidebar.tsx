@@ -11,6 +11,7 @@ import {
   LineChart,
   Menu,
   X,
+  Target,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -20,11 +21,12 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-    { icon: Phone, label: "Call Management", path: "/calls" },
-    { icon: MessageSquare, label: "Content Generator", path: "/content" },
-    { icon: Image, label: "Image Tools", path: "/images" },
-    { icon: Search, label: "Keyword Research", path: "/keywords" },
+    { icon: Phone, label: "Calls", path: "/calls" },
+    { icon: MessageSquare, label: "Content", path: "/content" },
+    { icon: Image, label: "Images", path: "/images" },
+    { icon: Search, label: "Keywords", path: "/keywords" },
     { icon: LineChart, label: "Analytics", path: "/analytics" },
+    { icon: Target, label: "Ads", path: "/ads" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -35,7 +37,6 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile Menu Button */}
       <button
         onClick={toggleMobileMenu}
         className="lg:hidden fixed top-4 right-4 z-50 p-2 rounded-md bg-white shadow-md"
@@ -47,7 +48,6 @@ const Sidebar = () => {
         )}
       </button>
 
-      {/* Sidebar Container */}
       <div
         className={cn(
           "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0",
@@ -93,7 +93,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Overlay */}
       {isMobileMenuOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"

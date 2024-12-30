@@ -9,6 +9,7 @@ import Content from "./pages/Content";
 import Images from "./pages/Images";
 import Keywords from "./pages/Keywords";
 import Analytics from "./pages/Analytics";
+import Ads from "./pages/Ads";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/images" element={<Images />} />
           <Route path="/keywords" element={<Keywords />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/ads" element={<Ads />} />
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
         </Routes>
