@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles } from "lucide-react";
 import {
@@ -12,8 +11,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const GEMINI_API_KEY = "AIzaSyDeJrf5k7cukzfvW2gNvWBsWB-W3mSdmRM";
+
 export const AdsOptimizer = () => {
-  const [apiKey, setApiKey] = useState("");
   const [campaignData, setCampaignData] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [recommendations, setRecommendations] = useState<string>("");
@@ -40,7 +40,7 @@ export const AdsOptimizer = () => {
     setIsAnalyzing(true);
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: {
@@ -82,25 +82,13 @@ export const AdsOptimizer = () => {
   return (
     <Card className="p-6 space-y-6">
       <div>
-        <h2 className="text-xl font-semibold mb-4">Google Ads Optimizer</h2>
+        <h2 className="text-xl font-semibold mb-4">Campaign Performance Analyzer</h2>
         <p className="text-gray-600">
-          Get AI-powered recommendations to improve your Google Ads performance
+          Get AI-powered recommendations to improve your advertising performance
         </p>
       </div>
 
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Gemini API Key
-          </label>
-          <Input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="Enter your Gemini API key"
-          />
-        </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Optimization Focus
@@ -129,7 +117,7 @@ export const AdsOptimizer = () => {
           <textarea
             value={campaignData}
             onChange={(e) => setCampaignData(e.target.value)}
-            placeholder="Paste your Google Ads campaign data here..."
+            placeholder="Paste your campaign data here..."
             className="w-full min-h-[150px] p-3 border rounded-md"
           />
         </div>
