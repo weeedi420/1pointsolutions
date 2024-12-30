@@ -27,12 +27,7 @@ const Sidebar = () => {
 
   return (
     <div className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-6 flex items-center gap-3">
-        <img
-          src="/lovable-uploads/5009b14b-9440-44ac-9a59-349216deb793.png"
-          alt="1Point Solutions"
-          className="h-8 w-8"
-        />
+      <div className="p-6">
         <h1 className="text-xl font-bold text-[#0FA0CE]">1Point Solutions</h1>
       </div>
       
