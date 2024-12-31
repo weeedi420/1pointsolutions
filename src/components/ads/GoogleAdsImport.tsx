@@ -2,9 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const GOOGLE_ADS_CLIENT_ID = "YOUR_CLIENT_ID.apps.googleusercontent.com";
-const GOOGLE_ADS_API_SCOPE = "https://www.googleapis.com/auth/adwords";
+import { Input } from "@/components/ui/input";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Settings } from "lucide-react";
 
 interface GoogleAdsImportProps {
   onDataImported: (data: string) => void;
@@ -12,12 +16,24 @@ interface GoogleAdsImportProps {
 
 export const GoogleAdsImport = ({ onDataImported }: GoogleAdsImportProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [clientId, setClientId] = useState("");
+  const [clientSecret, setClientSecret] = useState("");
+  const [developerToken, setDeveloperToken] = useState("");
   const { toast } = useToast();
 
   const handleGoogleLogin = async () => {
+    if (!clientId || !clientSecret || !developerToken) {
+      toast({
+        title: "Missing Credentials",
+        description: "Please provide all required Google Ads API credentials",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // For demonstration, we'll use sample data since we don't have actual API credentials
+      // For demonstration, we'll use sample data since we're not implementing the full OAuth flow
       const sampleData = `
 Campaign Name: Summer Sale 2024
 Budget: $1000/day
@@ -36,6 +52,11 @@ Active Ads: 15
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Store credentials in localStorage for future use
+      localStorage.setItem('googleAds_clientId', clientId);
+      localStorage.setItem('googleAds_clientSecret', clientSecret);
+      localStorage.setItem('googleAds_developerToken', developerToken);
+      
       onDataImported(sampleData);
     } catch (error) {
       toast({
@@ -49,19 +70,73 @@ Active Ads: 15
   };
 
   return (
-    <div className="flex flex-col space-y-2">
-      <Button
-        variant="outline"
-        onClick={handleGoogleLogin}
-        disabled={isLoading}
-        className="w-full"
-      >
-        <Upload className="mr-2 h-4 w-4" />
-        {isLoading ? "Importing..." : "Import from Google Ads"}
-      </Button>
-      <p className="text-sm text-gray-500">
-        Import your campaign data directly from Google Ads
-      </p>
+    <div className="space-y-4">
+      <Collapsible className="w-full">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="outline"
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+            className="flex-1 mr-2"
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            {isLoading ? "Importing..." : "Import from Google Ads"}
+          </Button>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </CollapsibleTrigger>
+        </div>
+
+        <CollapsibleContent className="mt-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Client ID
+            </label>
+            <Input
+              type="text"
+              value={clientId}
+              onChange={(e) => setClientId(e.target.value)}
+              placeholder="Enter your Google Ads Client ID"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Client Secret
+            </label>
+            <Input
+              type="password"
+              value={clientSecret}
+              onChange={(e) => setClientSecret(e.target.value)}
+              placeholder="Enter your Google Ads Client Secret"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Developer Token
+            </label>
+            <Input
+              type="password"
+              value={developerToken}
+              onChange={(e) => setDeveloperToken(e.target.value)}
+              placeholder="Enter your Google Ads Developer Token"
+            />
+          </div>
+          <p className="text-sm text-gray-500">
+            Your credentials are stored locally and are never sent to our servers.
+            Get your credentials from the{" "}
+            <a
+              href="https://developers.google.com/google-ads/api/docs/first-call/oauth-cloud"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Google Ads API Console
+            </a>
+          </p>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 };
