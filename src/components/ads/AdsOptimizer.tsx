@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Upload } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { GoogleAdsImport } from "./GoogleAdsImport";
 
 const GEMINI_API_KEY = "AIzaSyDeJrf5k7cukzfvW2gNvWBsWB-W3mSdmRM";
 
@@ -27,11 +28,19 @@ export const AdsOptimizer = () => {
     { value: "quality", label: "Quality Score" },
   ];
 
+  const handleImportedData = (data: string) => {
+    setCampaignData(data);
+    toast({
+      title: "Success",
+      description: "Campaign data imported successfully",
+    });
+  };
+
   const analyzeAds = async () => {
     if (!campaignData) {
       toast({
         title: "Error",
-        description: "Please enter your campaign data",
+        description: "Please enter your campaign data or import from Google Ads",
         variant: "destructive",
       });
       return;
@@ -89,6 +98,8 @@ export const AdsOptimizer = () => {
       </div>
 
       <div className="space-y-4">
+        <GoogleAdsImport onDataImported={handleImportedData} />
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Optimization Focus
@@ -117,7 +128,7 @@ export const AdsOptimizer = () => {
           <textarea
             value={campaignData}
             onChange={(e) => setCampaignData(e.target.value)}
-            placeholder="Paste your campaign data here..."
+            placeholder="Paste your campaign data here or import from Google Ads above..."
             className="w-full min-h-[150px] p-3 border rounded-md"
           />
         </div>
