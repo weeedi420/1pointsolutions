@@ -12,6 +12,9 @@ import {
   Menu,
   X,
   Target,
+  Mail,
+  Share2,
+  Globe,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -27,6 +30,9 @@ const Sidebar = () => {
     { icon: Search, label: "Keywords", path: "/keywords" },
     { icon: LineChart, label: "Analytics", path: "/analytics" },
     { icon: Target, label: "Ads", path: "/ads" },
+    { icon: Share2, label: "Social", path: "/social" },
+    { icon: Mail, label: "Email", path: "/email" },
+    { icon: Globe, label: "SEO", path: "/seo" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

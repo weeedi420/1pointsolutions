@@ -10,6 +10,9 @@ import Images from "./pages/Images";
 import Keywords from "./pages/Keywords";
 import Analytics from "./pages/Analytics";
 import Ads from "./pages/Ads";
+import Social from "./pages/Social";
+import Email from "./pages/Email";
+import SEO from "./pages/SEO";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
@@ -29,6 +32,9 @@ const App = () => (
           <Route path="/keywords" element={<Keywords />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/ads" element={<Ads />} />
+          <Route path="/social" element={<Social />} />
+          <Route path="/email" element={<Email />} />
+          <Route path="/seo" element={<SEO />} />
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
         </Routes>
