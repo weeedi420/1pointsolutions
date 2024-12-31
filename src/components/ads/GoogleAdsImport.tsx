@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,7 +8,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Settings } from "lucide-react";
 
 interface GoogleAdsImportProps {
   onDataImported: (data: string) => void;
@@ -25,7 +24,7 @@ export const GoogleAdsImport = ({ onDataImported }: GoogleAdsImportProps) => {
     if (!clientId || !clientSecret || !developerToken) {
       toast({
         title: "Missing Credentials",
-        description: "Please provide all required Google Ads API credentials",
+        description: "Please provide your Google Ads API credentials in the settings below",
         variant: "destructive",
       });
       return;
@@ -33,31 +32,17 @@ export const GoogleAdsImport = ({ onDataImported }: GoogleAdsImportProps) => {
 
     setIsLoading(true);
     try {
-      // For demonstration, we'll use sample data since we're not implementing the full OAuth flow
-      const sampleData = `
-Campaign Name: Summer Sale 2024
-Budget: $1000/day
-Impressions: 50,000
-Clicks: 2,500
-CTR: 5%
-Conversions: 125
-Cost per Conversion: $20
-Quality Score: 8/10
-Device Distribution: Mobile 60%, Desktop 35%, Tablet 5%
-Top Keywords: summer deals, discount clothes, seasonal offers
-Ad Groups: 5
-Active Ads: 15
-      `.trim();
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
       // Store credentials in localStorage for future use
       localStorage.setItem('googleAds_clientId', clientId);
       localStorage.setItem('googleAds_clientSecret', clientSecret);
       localStorage.setItem('googleAds_developerToken', developerToken);
       
-      onDataImported(sampleData);
+      // For now, we'll just show a success message without actual data import
+      toast({
+        title: "Authentication Required",
+        description: "Please complete the Google OAuth flow to import your data",
+      });
+      
     } catch (error) {
       toast({
         title: "Error",
