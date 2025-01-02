@@ -1,5 +1,8 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EmailComposer from "@/components/email/EmailComposer";
+import SubscribersList from "@/components/email/SubscribersList";
+import EmailAnalytics from "@/components/email/EmailAnalytics";
 
 const Email = () => {
   return (
@@ -8,16 +11,29 @@ const Email = () => {
         <div>
           <h1 className="text-3xl font-bold text-[#222222]">Email Marketing</h1>
           <p className="text-gray-600 mt-2">
-            Create, send, and track email campaigns
+            Create and manage your email campaigns
           </p>
         </div>
 
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Coming Soon</h2>
-          <p className="text-gray-600">
-            Email marketing tools are currently in development. Check back soon for updates!
-          </p>
-        </Card>
+        <Tabs defaultValue="compose" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="compose">Compose</TabsTrigger>
+            <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="compose">
+            <EmailComposer />
+          </TabsContent>
+
+          <TabsContent value="subscribers">
+            <SubscribersList />
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <EmailAnalytics />
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
