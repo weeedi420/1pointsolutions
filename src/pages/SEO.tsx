@@ -1,5 +1,8 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SeoAnalyzer from "@/components/seo/SeoAnalyzer";
+import KeywordResearch from "@/components/seo/KeywordResearch";
+import BacklinkChecker from "@/components/seo/BacklinkChecker";
 
 const SEO = () => {
   return (
@@ -12,12 +15,25 @@ const SEO = () => {
           </p>
         </div>
 
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Coming Soon</h2>
-          <p className="text-gray-600">
-            SEO analysis and optimization tools are currently in development. Check back soon for updates!
-          </p>
-        </Card>
+        <Tabs defaultValue="analyzer" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="analyzer">SEO Analyzer</TabsTrigger>
+            <TabsTrigger value="keywords">Keyword Research</TabsTrigger>
+            <TabsTrigger value="backlinks">Backlink Checker</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="analyzer">
+            <SeoAnalyzer />
+          </TabsContent>
+
+          <TabsContent value="keywords">
+            <KeywordResearch />
+          </TabsContent>
+
+          <TabsContent value="backlinks">
+            <BacklinkChecker />
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
