@@ -1,16 +1,21 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
-import { Phone, MessageSquare, Image, Search, Users, LineChart } from "lucide-react";
+import { Phone, MessageSquare, Image, Search, Users, LineChart, Calendar as CalendarIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-
-const VAPI_API_KEY = "3fa8e663-5960-4fb6-9637-ac96e864a340";
+import { Calendar } from "@/components/ui/calendar";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [calendarImages, setCalendarImages] = useState<{[key: string]: string}>({});
+  const { toast } = useToast();
+
   const { data: callStats, isLoading } = useQuery({
     queryKey: ['callStats'],
     queryFn: async () => {
-      // This is a placeholder for the Vapi API call
-      // We'll implement the actual API integration in the next iteration
       return {
         totalCalls: 0,
         averageDuration: '0:00',
@@ -19,10 +24,29 @@ const Index = () => {
     },
   });
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && selectedDate) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dateKey = selectedDate.toISOString().split('T')[0];
+        setCalendarImages(prev => ({
+          ...prev,
+          [dateKey]: reader.result as string
+        }));
+        toast({
+          title: "Success",
+          description: "Image added to calendar",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const stats = [
     { label: "Total Calls", value: isLoading ? "..." : callStats?.totalCalls || "0", icon: Phone },
     { label: "Content Generated", value: "0", icon: MessageSquare },
-    { label: "Images Optimized", value: "0", icon: Image },
+    { label: "Images Uploaded", value: Object.keys(calendarImages).length.toString(), icon: Image },
     { label: "Keywords Tracked", value: "0", icon: Search },
     { label: "Social Mentions", value: "0", icon: Users },
     { label: "Lead Conversion", value: "0%", icon: LineChart },
@@ -60,9 +84,39 @@ const Index = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Recent Calls</h2>
-            <div className="text-center text-gray-500 py-8">
-              {isLoading ? "Loading call data..." : "No calls recorded yet"}
+            <h2 className="text-xl font-semibold mb-4">Calendar</h2>
+            <div className="flex flex-col space-y-4">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                className="rounded-md border"
+              />
+              {selectedDate && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="cursor-pointer"
+                    />
+                    <Button variant="outline">
+                      <Image className="h-4 w-4 mr-2" />
+                      Add Image
+                    </Button>
+                  </div>
+                  {selectedDate && calendarImages[selectedDate.toISOString().split('T')[0]] && (
+                    <div className="mt-4">
+                      <img
+                        src={calendarImages[selectedDate.toISOString().split('T')[0]]}
+                        alt="Calendar entry"
+                        className="max-w-full h-auto rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </Card>
           
