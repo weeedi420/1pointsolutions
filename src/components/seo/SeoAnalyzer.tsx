@@ -3,10 +3,15 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Globe } from "lucide-react";
+import { Search, Globe, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
 const SeoAnalyzer = () => {
   const [url, setUrl] = useState("");
+  const [results, setResults] = useState<null | {
+    metaTags: boolean;
+    mobileResponsive: boolean;
+    loadSpeed: string;
+  }>(null);
   const { toast } = useToast();
 
   const analyzeSeo = () => {
@@ -19,11 +24,17 @@ const SeoAnalyzer = () => {
       return;
     }
 
-    toast({
-      title: "Analysis Started",
-      description: "Analyzing your URL for SEO metrics...",
+    // Simulate SEO analysis
+    setResults({
+      metaTags: Math.random() > 0.5,
+      mobileResponsive: Math.random() > 0.3,
+      loadSpeed: ["Fast", "Medium", "Slow"][Math.floor(Math.random() * 3)],
     });
-    // Here you would typically make an API call to analyze the URL
+
+    toast({
+      title: "Analysis Complete",
+      description: "SEO analysis has been completed successfully",
+    });
   };
 
   return (
@@ -41,20 +52,44 @@ const SeoAnalyzer = () => {
             Analyze
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card className="p-4">
-            <h3 className="font-medium mb-2">Meta Tags</h3>
-            <p className="text-sm text-gray-600">Check title, description, and other meta tags</p>
-          </Card>
-          <Card className="p-4">
-            <h3 className="font-medium mb-2">Content Analysis</h3>
-            <p className="text-sm text-gray-600">Analyze content quality and structure</p>
-          </Card>
-          <Card className="p-4">
-            <h3 className="font-medium mb-2">Mobile Friendliness</h3>
-            <p className="text-sm text-gray-600">Test mobile responsiveness</p>
-          </Card>
-        </div>
+        {results && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="p-4">
+              <h3 className="font-medium mb-2 flex items-center gap-2">
+                Meta Tags
+                {results.metaTags ? (
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                ) : (
+                  <XCircle className="h-4 w-4 text-red-500" />
+                )}
+              </h3>
+              <p className="text-sm text-gray-600">
+                {results.metaTags
+                  ? "Meta tags are properly configured"
+                  : "Meta tags need improvement"}
+              </p>
+            </Card>
+            <Card className="p-4">
+              <h3 className="font-medium mb-2 flex items-center gap-2">
+                Mobile Responsiveness
+                {results.mobileResponsive ? (
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-yellow-500" />
+                )}
+              </h3>
+              <p className="text-sm text-gray-600">
+                {results.mobileResponsive
+                  ? "Site is mobile-friendly"
+                  : "Mobile optimization needed"}
+              </p>
+            </Card>
+            <Card className="p-4">
+              <h3 className="font-medium mb-2">Load Speed</h3>
+              <p className="text-sm text-gray-600">Page load speed: {results.loadSpeed}</p>
+            </Card>
+          </div>
+        )}
       </div>
     </Card>
   );
