@@ -7,6 +7,7 @@ import { WebCalling } from "@/components/calls/WebCalling";
 import { PhoneNumbersList } from "@/components/calls/PhoneNumbersList";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
+import { purchasePhoneNumber, makeOutboundCall } from "@/services/vapi";
 
 const Calls = () => {
   const [areaCode, setAreaCode] = useState("");
@@ -29,19 +30,56 @@ const Calls = () => {
   const mockPhoneNumbers: { id: string; number: string; status: "active" | "pending" }[] = [];
 
   const handlePurchaseNumber = async () => {
-    toast({
-      title: "Feature Not Available",
-      description: "Phone number purchasing is not available in the web SDK. Please use the Vapi Dashboard.",
-      variant: "destructive",
-    });
+    try {
+      if (!areaCode || areaCode.length !== 3) {
+        toast({
+          title: "Invalid Area Code",
+          description: "Please enter a valid 3-digit area code.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const phoneNumber = await purchasePhoneNumber(areaCode);
+      toast({
+        title: "Success",
+        description: `Successfully purchased number: ${phoneNumber}`,
+      });
+      
+      // Refresh the phone numbers list
+      // Note: You might want to implement a refetch function for your phone numbers query
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to purchase phone number. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleOutboundCall = async () => {
-    toast({
-      title: "Feature Not Available",
-      description: "Outbound calling is not available in the web SDK. Please use the Vapi Dashboard.",
-      variant: "destructive",
-    });
+    try {
+      if (!outboundNumber) {
+        toast({
+          title: "Invalid Number",
+          description: "Please enter a valid phone number.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      await makeOutboundCall(outboundNumber);
+      toast({
+        title: "Success",
+        description: "Outbound call initiated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to initiate outbound call. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

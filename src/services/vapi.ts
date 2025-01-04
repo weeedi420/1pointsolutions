@@ -80,3 +80,54 @@ export const startWebCall = async (assistantId?: string, options?: AssistantOpti
     throw error;
   }
 };
+
+export const purchasePhoneNumber = async (areaCode: string) => {
+  try {
+    // Using Vapi's phone number purchasing endpoint
+    const response = await fetch(`https://api.vapi.ai/phone/numbers/purchase`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${VAPI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ areaCode }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to purchase number');
+    }
+
+    const data = await response.json();
+    return data.phoneNumber;
+  } catch (error) {
+    console.error('Error purchasing number:', error);
+    throw error;
+  }
+};
+
+export const makeOutboundCall = async (phoneNumber: string) => {
+  try {
+    // Using Vapi's outbound calling endpoint
+    const response = await fetch(`https://api.vapi.ai/call/outbound`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${VAPI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        phoneNumber,
+        callerId: "default", // Using default caller ID
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to initiate outbound call');
+    }
+
+    const data = await response.json();
+    return data.callId;
+  } catch (error) {
+    console.error('Error making outbound call:', error);
+    throw error;
+  }
+};
