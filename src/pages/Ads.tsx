@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { AdsOptimizer } from "@/components/ads/AdsOptimizer";
+import { GoogleLocalServices } from "@/components/ads/GoogleLocalServices";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 
@@ -25,6 +26,7 @@ const Ads = () => {
         </div>
 
         <AdsOptimizer />
+        <GoogleLocalServices />
       </div>
     </DashboardLayout>
   );
