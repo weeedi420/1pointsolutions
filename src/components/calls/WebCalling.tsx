@@ -98,7 +98,7 @@ export const WebCalling = ({
       <div className="relative z-10 text-center space-y-6">
         {!isCallActive ? (
           <div 
-            className="w-32 h-32 rounded-full bg-teal-500/20 flex items-center justify-center cursor-pointer hover:bg-teal-500/30 transition-all duration-300 mx-auto animate-pulse"
+            className="w-32 h-32 rounded-full bg-teal-500/20 flex items-center justify-center cursor-pointer hover:bg-teal-500/30 transition-all duration-300 mx-auto animate-[pulse_3s_ease-in-out_infinite]"
             onClick={!isConnecting ? handleStartCall : undefined}
           >
             {isConnecting ? (
