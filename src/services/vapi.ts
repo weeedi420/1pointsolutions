@@ -83,18 +83,22 @@ export const startWebCall = async (assistantId?: string, options?: AssistantOpti
 
 export const purchasePhoneNumber = async (areaCode: string) => {
   try {
-    // Using Vapi's phone number purchasing endpoint
-    const response = await fetch(`https://api.vapi.ai/phone/numbers/purchase`, {
+    // Using the correct Vapi API endpoint for phone number purchasing
+    const response = await fetch(`https://api.vapi.ai/v1/phone/numbers`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${VAPI_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ areaCode }),
+      body: JSON.stringify({ 
+        areaCode,
+        capabilities: ["voice", "sms"] // Adding capabilities as required by the API
+      }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to purchase number');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to purchase number');
     }
 
     const data = await response.json();
@@ -107,25 +111,27 @@ export const purchasePhoneNumber = async (areaCode: string) => {
 
 export const makeOutboundCall = async (phoneNumber: string) => {
   try {
-    // Using Vapi's outbound calling endpoint
-    const response = await fetch(`https://api.vapi.ai/call/outbound`, {
+    // Using the correct Vapi API endpoint for outbound calls
+    const response = await fetch(`https://api.vapi.ai/v1/calls`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${VAPI_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
-        phoneNumber,
-        callerId: "default", // Using default caller ID
+        to: phoneNumber,
+        from: "default", // Using default caller ID
+        assistantId: "default", // Using default assistant
       }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to initiate outbound call');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to initiate outbound call');
     }
 
     const data = await response.json();
-    return data.callId;
+    return data.id;
   } catch (error) {
     console.error('Error making outbound call:', error);
     throw error;
