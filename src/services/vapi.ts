@@ -1,6 +1,6 @@
 import Vapi from "@vapi-ai/web";
 
-const VAPI_API_KEY = "3fa8e663-5960-4fb6-9637-ac96e864a340";
+const VAPI_API_KEY = "pk_3fa8e663-5960-4fb6-9637-ac96e864a340";
 
 // Initialize Vapi client
 export const vapiClient = new Vapi(VAPI_API_KEY);
