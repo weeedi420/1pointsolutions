@@ -1,10 +1,11 @@
-import { Phone, Clock, UserCheck } from "lucide-react";
+import { Phone, Clock, UserCheck, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface CallData {
   totalCalls: number;
   averageDuration: string;
   leadGenerated: number;
+  conversions: number;
 }
 
 interface CallStatsProps {
@@ -32,10 +33,16 @@ export const CallStats = ({ callStats, isLoading }: CallStatsProps) => {
       icon: UserCheck,
       description: "Total leads captured",
     },
+    {
+      title: "Conversions",
+      value: isLoading ? "..." : callStats?.conversions || "0",
+      icon: TrendingUp,
+      description: "Successful conversions",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {stats.map((stat) => (
         <Card key={stat.title}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
