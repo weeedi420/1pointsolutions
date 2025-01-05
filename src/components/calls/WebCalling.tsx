@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Globe, Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { Mic, MicOff, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { startWebCall } from "@/services/vapi";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
 
 interface WebCallingProps {
   assistantId: string;
@@ -44,7 +43,7 @@ export const WebCalling = ({
   const handleStartCall = async () => {
     try {
       setIsConnecting(true);
-      await startWebCall(assistantId);
+      await startWebCall("27d3e2c3-a384-4ee7-b185-6475d7b9d4b8"); // Using the provided assistant ID
       setIsCallActive(true);
       toast({
         title: "Call Connected",
@@ -88,92 +87,77 @@ export const WebCalling = ({
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Globe className="h-5 w-5 text-[#0FA0CE]" />
-          Web Calling
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Input
-              placeholder="Assistant ID (optional)"
-              className="flex-1"
-              value={assistantId}
-              onChange={(e) => onAssistantIdChange(e.target.value)}
-              disabled={isCallActive || isConnecting}
-            />
-            <Button 
-              onClick={isCallActive ? handleEndCall : handleStartCall}
-              disabled={isConnecting}
-              variant={isCallActive ? "destructive" : "default"}
-              className="min-w-[120px]"
-            >
-              {isConnecting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : isCallActive ? (
-                <>
-                  <PhoneOff className="mr-2 h-4 w-4" />
-                  End Call
-                </>
-              ) : (
-                <>
-                  <Phone className="mr-2 h-4 w-4" />
-                  Start Call
-                </>
-              )}
-            </Button>
-          </div>
+    <div className="flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-blue-950 via-blue-900 to-teal-900 rounded-xl p-8 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-full bg-[url('/aurora.png')] opacity-30 mix-blend-screen" />
+      
+      <div className="relative z-10 text-center space-y-6">
+        <h1 className="text-5xl font-bold text-white mb-4">Voice AI Demo</h1>
+        <p className="text-xl text-gray-200 mb-8 max-w-2xl">
+          Experience our voice AI technology firsthand. Click the microphone to start a conversation with our AI assistant.
+        </p>
 
-          {isCallActive && (
-            <div className="space-y-4">
-              <div className="flex justify-center text-2xl font-mono">
-                {formatDuration(callDuration)}
-              </div>
-              
-              <div className="flex justify-center gap-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={toggleMute}
-                  className={isMuted ? "bg-red-50" : ""}
-                >
-                  {isMuted ? (
-                    <MicOff className="h-4 w-4 text-red-500" />
-                  ) : (
-                    <Mic className="h-4 w-4" />
-                  )}
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={toggleSpeaker}
-                  className={!isSpeakerOn ? "bg-red-50" : ""}
-                >
-                  {isSpeakerOn ? (
-                    <Volume2 className="h-4 w-4" />
-                  ) : (
-                    <VolumeX className="h-4 w-4 text-red-500" />
-                  )}
-                </Button>
-              </div>
+        {!isCallActive ? (
+          <div 
+            className="w-32 h-32 rounded-full bg-teal-500/20 flex items-center justify-center cursor-pointer hover:bg-teal-500/30 transition-all duration-300 mx-auto"
+            onClick={!isConnecting ? handleStartCall : undefined}
+          >
+            {isConnecting ? (
+              <Loader2 className="w-12 h-12 text-teal-400 animate-spin" />
+            ) : (
+              <Mic className="w-12 h-12 text-teal-400" />
+            )}
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="text-4xl font-mono text-teal-400">
+              {formatDuration(callDuration)}
             </div>
-          )}
-
-          <div className="text-sm text-gray-500">
-            <p>Tips:</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Use a headset for better audio quality</li>
-              <li>Ensure your microphone permissions are enabled</li>
-              <li>Speak clearly and at a normal pace</li>
-              <li>Stay in a quiet environment for optimal experience</li>
-            </ul>
+            
+            <div className="flex justify-center gap-6">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={toggleMute}
+                className={`rounded-full p-6 ${isMuted ? 'bg-red-500/20 border-red-500' : 'bg-teal-500/20 border-teal-500'}`}
+              >
+                {isMuted ? (
+                  <MicOff className="h-6 w-6 text-red-500" />
+                ) : (
+                  <Mic className="h-6 w-6 text-teal-400" />
+                )}
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleEndCall}
+                className="rounded-full p-6 bg-red-500/20 border-red-500 hover:bg-red-500/30"
+              >
+                <span className="text-red-500 font-semibold">End Call</span>
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={toggleSpeaker}
+                className={`rounded-full p-6 ${!isSpeakerOn ? 'bg-red-500/20 border-red-500' : 'bg-teal-500/20 border-teal-500'}`}
+              >
+                {isSpeakerOn ? (
+                  <Volume2 className="h-6 w-6 text-teal-400" />
+                ) : (
+                  <VolumeX className="h-6 w-6 text-red-500" />
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        )}
+
+        {!isCallActive && (
+          <p className="text-gray-300 mt-8">
+            Click the microphone to give it a try!
+          </p>
+        )}
+      </div>
+    </div>
   );
 };

@@ -40,3 +40,34 @@
 .read-the-docs {
   color: #888;
 }
+
+.aurora-bg {
+  background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.aurora-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(15, 160, 206, 0.1), transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(15, 160, 206, 0.1), transparent 50%);
+  animation: aurora 20s linear infinite;
+}
+
+@keyframes aurora {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
