@@ -15,14 +15,14 @@ const Calls = () => {
   const [assistantId, setAssistantId] = useState("");
   const { toast } = useToast();
 
-  // Mock call statistics since the Web SDK doesn't support listing calls
   const { data: callStats, isLoading: isLoadingStats } = useQuery({
     queryKey: ['callStats'],
     queryFn: async () => {
       return {
         totalCalls: 0,
         averageDuration: "0:00",
-        leadGenerated: 0
+        leadGenerated: 0,
+        conversions: 0
       };
     }
   });
@@ -85,6 +85,11 @@ const Calls = () => {
   return (
     <DashboardLayout>
       <div className="space-y-8">
+        <WebCalling
+          assistantId={assistantId}
+          onAssistantIdChange={setAssistantId}
+        />
+
         <div>
           <h1 className="text-3xl font-bold text-[#222222]">Call Management</h1>
           <p className="text-gray-600 mt-2">
@@ -106,11 +111,6 @@ const Calls = () => {
             onOutboundCall={handleOutboundCall}
           />
         </div>
-
-        <WebCalling
-          assistantId={assistantId}
-          onAssistantIdChange={setAssistantId}
-        />
 
         <PhoneNumbersList phoneNumbers={mockPhoneNumbers} />
       </div>
