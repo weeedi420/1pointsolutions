@@ -43,7 +43,7 @@ export const WebCalling = ({
   const handleStartCall = async () => {
     try {
       setIsConnecting(true);
-      await startWebCall("27d3e2c3-a384-4ee7-b185-6475d7b9d4b8"); // Using the provided assistant ID
+      await startWebCall("27d3e2c3-a384-4ee7-b185-6475d7b9d4b8");
       setIsCallActive(true);
       toast({
         title: "Call Connected",
@@ -88,14 +88,14 @@ export const WebCalling = ({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-blue-950 via-blue-900 to-teal-900 rounded-xl p-8 relative overflow-hidden">
+      <h1 className="text-5xl font-bold text-white mb-4 relative z-10">Voice AI Demo</h1>
+      <p className="text-xl text-gray-200 mb-8 max-w-2xl relative z-10">
+        Experience our voice AI technology firsthand. Click the microphone to start a conversation with our AI assistant.
+      </p>
+      
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/aurora.png')] opacity-30 mix-blend-screen" />
       
       <div className="relative z-10 text-center space-y-6">
-        <h1 className="text-5xl font-bold text-white mb-4">Voice AI Demo</h1>
-        <p className="text-xl text-gray-200 mb-8 max-w-2xl">
-          Experience our voice AI technology firsthand. Click the microphone to start a conversation with our AI assistant.
-        </p>
-
         {!isCallActive ? (
           <div 
             className="w-32 h-32 rounded-full bg-teal-500/20 flex items-center justify-center cursor-pointer hover:bg-teal-500/30 transition-all duration-300 mx-auto"
