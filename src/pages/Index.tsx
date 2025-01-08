@@ -58,7 +58,7 @@ const Index = () => {
         <div>
           <h1 className="text-3xl font-bold text-[#222222]">Welcome to 1Point Solutions</h1>
           <p className="text-gray-600 mt-2">
-            Your all-in-one marketing and call management solution
+            Your business solutions hub
           </p>
         </div>
 
