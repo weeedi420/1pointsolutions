@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, MicOff, Volume2, VolumeX, Loader2, Lock } from "lucide-react";
+import { Mic, MicOff, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { startWebCall } from "@/services/vapi";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,12 +20,7 @@ export const WebCalling = ({
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [isConnecting, setIsConnecting] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
-  const [accessKey, setAccessKey] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
   const { toast } = useToast();
-
-  // The demo access key - in a real app, this would be managed securely
-  const DEMO_ACCESS_KEY = "DEMO-AI-CALL-2024";
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -43,22 +38,6 @@ export const WebCalling = ({
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const verifyAccessKey = () => {
-    if (accessKey === DEMO_ACCESS_KEY) {
-      setIsVerified(true);
-      toast({
-        title: "Access Granted",
-        description: "You now have access to the AI Call Agent.",
-      });
-    } else {
-      toast({
-        title: "Invalid Key",
-        description: "Please enter a valid access key.",
-        variant: "destructive",
-      });
-    }
   };
 
   const handleStartCall = async () => {
@@ -106,40 +85,6 @@ export const WebCalling = ({
       description: `Speaker is now ${isSpeakerOn ? "off" : "on"}.`,
     });
   };
-
-  if (!isVerified) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-blue-950 via-blue-900 to-teal-900 rounded-xl p-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('/aurora.png')] opacity-30 mix-blend-screen" />
-        
-        <div className="relative z-10 text-center space-y-6 max-w-md w-full">
-          <Lock className="w-16 h-16 text-teal-400 mx-auto" />
-          <h1 className="text-3xl font-bold text-white">Access Required</h1>
-          <p className="text-gray-200">
-            Please enter your access key to use the AI Call Agent.
-          </p>
-          <div className="space-y-4">
-            <Input
-              type="text"
-              placeholder="Enter access key"
-              value={accessKey}
-              onChange={(e) => setAccessKey(e.target.value)}
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-            />
-            <Button 
-              onClick={verifyAccessKey}
-              className="w-full bg-teal-500 hover:bg-teal-600"
-            >
-              Verify Access
-            </Button>
-          </div>
-          <p className="text-sm text-gray-400">
-            Contact support to obtain an access key.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-blue-950 via-blue-900 to-teal-900 rounded-xl p-8 relative overflow-hidden">

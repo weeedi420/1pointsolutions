@@ -8,11 +8,15 @@ import { PhoneNumbersList } from "@/components/calls/PhoneNumbersList";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { purchasePhoneNumber, makeOutboundCall } from "@/services/vapi";
+import { useAccess } from "@/contexts/AccessContext";
+import { LockScreen } from "@/components/calls/LockScreen";
 
 const Calls = () => {
   const [areaCode, setAreaCode] = useState("");
   const [outboundNumber, setOutboundNumber] = useState("");
   const [assistantId, setAssistantId] = useState("");
+  const [accessKey, setAccessKey] = useState("");
+  const { isVerified, verifyAccessKey } = useAccess();
   const { toast } = useToast();
 
   const { data: callStats, isLoading: isLoadingStats } = useQuery({
@@ -45,9 +49,6 @@ const Calls = () => {
         title: "Success",
         description: `Successfully purchased number: ${phoneNumber}`,
       });
-      
-      // Refresh the phone numbers list
-      // Note: You might want to implement a refetch function for your phone numbers query
     } catch (error) {
       toast({
         title: "Error",
@@ -81,6 +82,19 @@ const Calls = () => {
       });
     }
   };
+
+  if (!isVerified) {
+    return (
+      <DashboardLayout>
+        <LockScreen
+          onVerify={verifyAccessKey}
+          accessKey={accessKey}
+          setAccessKey={setAccessKey}
+          title="Calls Feature Access Required"
+        />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
