@@ -55,7 +55,7 @@ const Index = () => {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div>
+        <div className="flex flex-col items-start">
           <h1 className="text-3xl font-bold text-[#222222]">Welcome to 1Point Solutions</h1>
           <p className="text-gray-600 mt-2">
             Your business solutions hub
