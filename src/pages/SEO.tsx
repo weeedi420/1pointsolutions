@@ -20,14 +20,28 @@ const SEO = () => {
         </div>
 
         <Tabs defaultValue="analyzer" className="space-y-4">
-          <TabsList className="flex flex-wrap gap-2">
-            <TabsTrigger value="analyzer">SEO Analyzer</TabsTrigger>
-            <TabsTrigger value="keywords">Keyword Research</TabsTrigger>
-            <TabsTrigger value="backlinks">Backlink Checker</TabsTrigger>
-            <TabsTrigger value="content">Content Optimizer</TabsTrigger>
-            <TabsTrigger value="sitemap">Sitemap Generator</TabsTrigger>
-            <TabsTrigger value="robots">Robots.txt Generator</TabsTrigger>
-            <TabsTrigger value="indexing">Google Indexing</TabsTrigger>
+          <TabsList className="inline-flex h-auto flex-wrap gap-2 bg-transparent p-0">
+            <TabsTrigger value="analyzer" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              SEO Analyzer
+            </TabsTrigger>
+            <TabsTrigger value="keywords" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Keyword Research
+            </TabsTrigger>
+            <TabsTrigger value="backlinks" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Backlink Checker
+            </TabsTrigger>
+            <TabsTrigger value="content" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Content Optimizer
+            </TabsTrigger>
+            <TabsTrigger value="sitemap" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Sitemap Generator
+            </TabsTrigger>
+            <TabsTrigger value="robots" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Robots.txt Generator
+            </TabsTrigger>
+            <TabsTrigger value="indexing" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Google Indexing
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="analyzer">
