@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Globe, Trash2, Key, ExternalLink } from "lucide-react";
+import { Loader2, Globe, Trash2, Key, ExternalLink, Upload } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const GoogleIndexing = () => {
   const [url, setUrl] = useState("");
@@ -16,6 +17,36 @@ const GoogleIndexing = () => {
   const handleApiKeyChange = (newKey: string) => {
     setApiKey(newKey);
     localStorage.setItem("google_indexing_api_key", newKey);
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const fileContent = await file.text();
+      const jsonContent = JSON.parse(fileContent);
+      
+      if (jsonContent.private_key) {
+        handleApiKeyChange(jsonContent.private_key);
+        toast({
+          title: "Success",
+          description: "Service account credentials loaded successfully",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Invalid service account credentials file",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to parse JSON file",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleIndex = async (type: "URL_UPDATED" | "URL_DELETED") => {
@@ -155,31 +186,63 @@ const GoogleIndexing = () => {
         <div>
           <h2 className="text-xl font-semibold">Google Indexing</h2>
           <div className="mt-2 text-sm text-gray-600 space-y-2">
-            <p>To use this tool, you'll need a Google Indexing API key. Here's how to get one:</p>
+            <p>To use this tool, you'll need Google service account credentials. You can either:</p>
+            <ol className="list-decimal list-inside space-y-1">
+              <li>Upload your service account JSON file directly</li>
+              <li>Or paste your private key manually</li>
+            </ol>
+            <p className="mt-2">To get your credentials:</p>
             <ol className="list-decimal list-inside space-y-1">
               <li>Go to the <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center">Google Cloud Console <ExternalLink className="ml-1 h-3 w-3" /></a></li>
               <li>Create a new project or select an existing one</li>
               <li>Enable the Indexing API for your project</li>
               <li>Create credentials (Service Account Key)</li>
-              <li>Download the JSON file and copy the "private_key" value</li>
+              <li>Download the JSON file</li>
             </ol>
           </div>
         </div>
         
-        <div className="space-y-2">
-          <label htmlFor="apiKey" className="text-sm font-medium">
-            Google Indexing API Key
-          </label>
-          <div className="flex items-center gap-2">
-            <Input
-              id="apiKey"
-              type="password"
-              placeholder="Enter your Google Indexing API key..."
-              value={apiKey}
-              onChange={(e) => handleApiKeyChange(e.target.value)}
-              className="flex-1"
-            />
-            <Key className="text-gray-400" size={20} />
+        <div className="space-y-4">
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="jsonFile" className="text-sm font-medium">
+              Upload Service Account JSON
+            </label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="jsonFile"
+                type="file"
+                accept=".json"
+                onChange={handleFileUpload}
+                className="flex-1"
+              />
+              <Upload className="text-gray-400" size={20} />
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="apiKey" className="text-sm font-medium">
+              Paste Private Key
+            </label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="apiKey"
+                type="password"
+                placeholder="Enter your private key..."
+                value={apiKey}
+                onChange={(e) => handleApiKeyChange(e.target.value)}
+                className="flex-1"
+              />
+              <Key className="text-gray-400" size={20} />
+            </div>
           </div>
         </div>
 
