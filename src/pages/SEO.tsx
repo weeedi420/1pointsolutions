@@ -6,6 +6,7 @@ import BacklinkChecker from "@/components/seo/BacklinkChecker";
 import ContentOptimizer from "@/components/seo/ContentOptimizer";
 import SitemapGenerator from "@/components/seo/SitemapGenerator";
 import RobotsTxtGenerator from "@/components/seo/RobotsTxtGenerator";
+import GoogleIndexing from "@/components/seo/GoogleIndexing";
 
 const SEO = () => {
   return (
@@ -26,6 +27,7 @@ const SEO = () => {
             <TabsTrigger value="content">Content Optimizer</TabsTrigger>
             <TabsTrigger value="sitemap">Sitemap Generator</TabsTrigger>
             <TabsTrigger value="robots">Robots.txt Generator</TabsTrigger>
+            <TabsTrigger value="indexing">Google Indexing</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analyzer">
@@ -50,6 +52,10 @@ const SEO = () => {
 
           <TabsContent value="robots">
             <RobotsTxtGenerator />
+          </TabsContent>
+
+          <TabsContent value="indexing">
+            <GoogleIndexing />
           </TabsContent>
         </Tabs>
       </div>
