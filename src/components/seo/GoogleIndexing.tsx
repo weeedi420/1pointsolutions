@@ -4,13 +4,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Globe, Trash2 } from "lucide-react";
+import { Loader2, Globe, Trash2, Key } from "lucide-react";
 
 const GoogleIndexing = () => {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const [sitemapUrl, setSitemapUrl] = useState("");
+  const [apiKey, setApiKey] = useState(localStorage.getItem("google_indexing_api_key") || "");
+
+  const handleApiKeyChange = (newKey: string) => {
+    setApiKey(newKey);
+    localStorage.setItem("google_indexing_api_key", newKey);
+  };
 
   const handleIndex = async (type: "URL_UPDATED" | "URL_DELETED") => {
     if (!url) {
@@ -22,18 +28,17 @@ const GoogleIndexing = () => {
       return;
     }
 
+    if (!apiKey) {
+      toast({
+        title: "Error",
+        description: "Please enter your Google Indexing API key",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const apiKey = localStorage.getItem("google_indexing_api_key");
-      if (!apiKey) {
-        toast({
-          title: "Error",
-          description: "Please set your Google Indexing API key in settings",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const response = await fetch(
         `https://indexing.googleapis.com/v3/urlNotifications:publish`,
         {
@@ -81,18 +86,17 @@ const GoogleIndexing = () => {
       return;
     }
 
+    if (!apiKey) {
+      toast({
+        title: "Error",
+        description: "Please enter your Google Indexing API key",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const apiKey = localStorage.getItem("google_indexing_api_key");
-      if (!apiKey) {
-        toast({
-          title: "Error",
-          description: "Please set your Google Indexing API key in settings",
-          variant: "destructive",
-        });
-        return;
-      }
-
       // Fetch the sitemap
       const response = await fetch(sitemapUrl);
       const text = await response.text();
@@ -148,10 +152,28 @@ const GoogleIndexing = () => {
   return (
     <Card className="p-6">
       <h2 className="text-xl font-semibold mb-4">Google Indexing</h2>
+      
+      <div className="mb-6 space-y-2">
+        <label htmlFor="apiKey" className="text-sm font-medium">
+          Google Indexing API Key
+        </label>
+        <div className="flex items-center gap-2">
+          <Input
+            id="apiKey"
+            type="password"
+            placeholder="Enter your Google Indexing API key..."
+            value={apiKey}
+            onChange={(e) => handleApiKeyChange(e.target.value)}
+            className="flex-1"
+          />
+          <Key className="text-gray-400" size={20} />
+        </div>
+      </div>
+
       <Tabs defaultValue="url" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="url">Single URL</TabsTrigger>
-          <TabsTrigger value="sitemap">Sitemap</TabsTrigger>
+        <TabsList className="w-full">
+          <TabsTrigger value="url" className="flex-1">Single URL</TabsTrigger>
+          <TabsTrigger value="sitemap" className="flex-1">Sitemap</TabsTrigger>
         </TabsList>
 
         <TabsContent value="url" className="space-y-4">
@@ -161,16 +183,16 @@ const GoogleIndexing = () => {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-4">
               <Button
                 onClick={() => handleIndex("URL_UPDATED")}
                 disabled={loading}
-                className="flex-1"
+                className="w-full"
               >
                 {loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="animate-spin" />
                 ) : (
-                  <Globe className="mr-2 h-4 w-4" />
+                  <Globe />
                 )}
                 Index URL
               </Button>
@@ -178,12 +200,12 @@ const GoogleIndexing = () => {
                 onClick={() => handleIndex("URL_DELETED")}
                 disabled={loading}
                 variant="destructive"
-                className="flex-1"
+                className="w-full"
               >
                 {loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="animate-spin" />
                 ) : (
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 />
                 )}
                 Deindex URL
               </Button>
@@ -204,9 +226,9 @@ const GoogleIndexing = () => {
               className="w-full"
             >
               {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="animate-spin" />
               ) : (
-                <Globe className="mr-2 h-4 w-4" />
+                <Globe />
               )}
               Process Sitemap
             </Button>
