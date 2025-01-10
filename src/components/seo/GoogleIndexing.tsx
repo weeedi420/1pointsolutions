@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Globe, Trash2, Key } from "lucide-react";
+import { Loader2, Globe, Trash2, Key, ExternalLink } from "lucide-react";
 
 const GoogleIndexing = () => {
   const [url, setUrl] = useState("");
@@ -151,90 +151,110 @@ const GoogleIndexing = () => {
 
   return (
     <Card className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Google Indexing</h2>
-      
-      <div className="mb-6 space-y-2">
-        <label htmlFor="apiKey" className="text-sm font-medium">
-          Google Indexing API Key
-        </label>
-        <div className="flex items-center gap-2">
-          <Input
-            id="apiKey"
-            type="password"
-            placeholder="Enter your Google Indexing API key..."
-            value={apiKey}
-            onChange={(e) => handleApiKeyChange(e.target.value)}
-            className="flex-1"
-          />
-          <Key className="text-gray-400" size={20} />
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-semibold">Google Indexing</h2>
+          <div className="mt-2 text-sm text-gray-600 space-y-2">
+            <p>To use this tool, you'll need a Google Indexing API key. Here's how to get one:</p>
+            <ol className="list-decimal list-inside space-y-1">
+              <li>Go to the <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center">Google Cloud Console <ExternalLink className="ml-1 h-3 w-3" /></a></li>
+              <li>Create a new project or select an existing one</li>
+              <li>Enable the Indexing API for your project</li>
+              <li>Create credentials (Service Account Key)</li>
+              <li>Download the JSON file and copy the "private_key" value</li>
+            </ol>
+          </div>
         </div>
-      </div>
-
-      <Tabs defaultValue="url" className="space-y-4">
-        <TabsList className="w-full">
-          <TabsTrigger value="url" className="flex-1">Single URL</TabsTrigger>
-          <TabsTrigger value="sitemap" className="flex-1">Sitemap</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="url" className="space-y-4">
-          <div className="space-y-4">
+        
+        <div className="space-y-2">
+          <label htmlFor="apiKey" className="text-sm font-medium">
+            Google Indexing API Key
+          </label>
+          <div className="flex items-center gap-2">
             <Input
-              placeholder="Enter URL to index/deindex..."
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              id="apiKey"
+              type="password"
+              placeholder="Enter your Google Indexing API key..."
+              value={apiKey}
+              onChange={(e) => handleApiKeyChange(e.target.value)}
+              className="flex-1"
             />
-            <div className="grid grid-cols-2 gap-4">
+            <Key className="text-gray-400" size={20} />
+          </div>
+        </div>
+
+        <Tabs defaultValue="url" className="space-y-4">
+          <TabsList className="w-full">
+            <TabsTrigger value="url" className="flex-1">Single URL</TabsTrigger>
+            <TabsTrigger value="sitemap" className="flex-1">Sitemap</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="url" className="space-y-4">
+            <div className="space-y-4">
+              <div className="text-sm text-gray-600">
+                <p>Use this section to index or remove individual URLs from Google's index.</p>
+              </div>
+              <Input
+                placeholder="Enter URL to index/deindex..."
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  onClick={() => handleIndex("URL_UPDATED")}
+                  disabled={loading}
+                  className="w-full"
+                >
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Globe className="mr-2 h-4 w-4" />
+                  )}
+                  Index URL
+                </Button>
+                <Button
+                  onClick={() => handleIndex("URL_DELETED")}
+                  disabled={loading}
+                  variant="destructive"
+                  className="w-full"
+                >
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="mr-2 h-4 w-4" />
+                  )}
+                  Deindex URL
+                </Button>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="sitemap" className="space-y-4">
+            <div className="space-y-4">
+              <div className="text-sm text-gray-600">
+                <p>Submit your sitemap URL to process multiple URLs at once. All URLs in the sitemap will be submitted for indexing.</p>
+              </div>
+              <Input
+                placeholder="Enter sitemap URL..."
+                value={sitemapUrl}
+                onChange={(e) => setSitemapUrl(e.target.value)}
+              />
               <Button
-                onClick={() => handleIndex("URL_UPDATED")}
+                onClick={handleSitemapSubmit}
                 disabled={loading}
                 className="w-full"
               >
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                  <Globe />
+                  <Globe className="mr-2 h-4 w-4" />
                 )}
-                Index URL
-              </Button>
-              <Button
-                onClick={() => handleIndex("URL_DELETED")}
-                disabled={loading}
-                variant="destructive"
-                className="w-full"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Trash2 />
-                )}
-                Deindex URL
+                Process Sitemap
               </Button>
             </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="sitemap" className="space-y-4">
-          <div className="space-y-4">
-            <Input
-              placeholder="Enter sitemap URL..."
-              value={sitemapUrl}
-              onChange={(e) => setSitemapUrl(e.target.value)}
-            />
-            <Button
-              onClick={handleSitemapSubmit}
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Globe />
-              )}
-              Process Sitemap
-            </Button>
-          </div>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </div>
     </Card>
   );
 };
