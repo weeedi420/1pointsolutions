@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
-  Google,
+  Chrome,
   Facebook,
   Twitter,
   Instagram,
@@ -62,7 +62,7 @@ export const IntegrationsSettings = () => {
   const integrations = [
     {
       name: "Google Analytics",
-      icon: Google,
+      icon: Chrome,
       connected: !!googleAnalyticsId,
       input: {
         value: googleAnalyticsId,
