@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Download, Wand2, Instagram } from "lucide-react";
 import { useContentGeneration } from "@/hooks/useContentGeneration";
+import InstagramScraper from "instagram-scraper-api";
 
 interface InstagramPost {
   id: string;
@@ -26,32 +27,30 @@ export const InstagramRepurpose = () => {
   const fetchInstagramAccount = async (username: string) => {
     setIsLoading(true);
     try {
-      // Note: This is a mock implementation. In a real app, you'd need to use Instagram's Graph API
-      // or a third-party service to fetch the actual account data
-      const mockPosts: InstagramPost[] = [
-        {
-          id: "1",
-          caption: "Beautiful sunset at the beach! 🌅 #nature #photography",
-          mediaUrl: "https://example.com/image1.jpg",
-          timestamp: new Date().toISOString(),
-        },
-        {
-          id: "2",
-          caption: "Delicious breakfast to start the day! 🍳 #foodie",
-          mediaUrl: "https://example.com/image2.jpg",
-          timestamp: new Date().toISOString(),
-        },
-      ];
+      const scraper = new InstagramScraper();
+      const userData = await scraper.getProfile(username);
       
-      setPosts(mockPosts);
+      if (!userData || !userData.posts) {
+        throw new Error("Failed to fetch Instagram data");
+      }
+
+      const formattedPosts: InstagramPost[] = userData.posts.map((post: any) => ({
+        id: post.id,
+        caption: post.caption || "",
+        mediaUrl: post.display_url,
+        timestamp: new Date(post.taken_at_timestamp * 1000).toISOString(),
+      }));
+
+      setPosts(formattedPosts);
       toast({
         title: "Account Retrieved",
-        description: "Instagram account posts have been downloaded successfully",
+        description: `Successfully downloaded ${formattedPosts.length} posts from ${username}`,
       });
     } catch (error) {
+      console.error("Instagram fetch error:", error);
       toast({
         title: "Error",
-        description: "Failed to retrieve Instagram account data",
+        description: "Failed to retrieve Instagram account data. Please check the username and try again.",
         variant: "destructive",
       });
     } finally {
@@ -123,6 +122,11 @@ export const InstagramRepurpose = () => {
                         {new Date(post.timestamp).toLocaleDateString()}
                       </p>
                       <p className="text-sm">{post.caption}</p>
+                      <img 
+                        src={post.mediaUrl} 
+                        alt="Post media" 
+                        className="w-32 h-32 object-cover rounded-md"
+                      />
                     </div>
                     <Button
                       variant="outline"
