@@ -4,32 +4,54 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Download, Wand2 } from "lucide-react";
+import { Loader2, Download, Wand2, Instagram } from "lucide-react";
 import { useContentGeneration } from "@/hooks/useContentGeneration";
 
+interface InstagramPost {
+  id: string;
+  caption: string;
+  mediaUrl: string;
+  timestamp: string;
+}
+
 export const InstagramRepurpose = () => {
-  const [instagramUrl, setInstagramUrl] = useState("");
-  const [originalContent, setOriginalContent] = useState("");
+  const [username, setUsername] = useState("");
+  const [posts, setPosts] = useState<InstagramPost[]>([]);
+  const [selectedPost, setSelectedPost] = useState<InstagramPost | null>(null);
   const [repurposedContent, setRepurposedContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { generateContent } = useContentGeneration();
 
-  const extractInstagramContent = async (url: string) => {
+  const fetchInstagramAccount = async (username: string) => {
     setIsLoading(true);
     try {
-      // Note: This is a mock implementation. In a real app, you'd need to use Instagram's API
-      // or a third-party service to fetch the actual content
-      const mockContent = "This is a placeholder for the Instagram content. In a real implementation, you would fetch the actual content from the Instagram post.";
-      setOriginalContent(mockContent);
+      // Note: This is a mock implementation. In a real app, you'd need to use Instagram's Graph API
+      // or a third-party service to fetch the actual account data
+      const mockPosts: InstagramPost[] = [
+        {
+          id: "1",
+          caption: "Beautiful sunset at the beach! 🌅 #nature #photography",
+          mediaUrl: "https://example.com/image1.jpg",
+          timestamp: new Date().toISOString(),
+        },
+        {
+          id: "2",
+          caption: "Delicious breakfast to start the day! 🍳 #foodie",
+          mediaUrl: "https://example.com/image2.jpg",
+          timestamp: new Date().toISOString(),
+        },
+      ];
+      
+      setPosts(mockPosts);
       toast({
-        title: "Content Retrieved",
-        description: "Instagram content has been downloaded successfully",
+        title: "Account Retrieved",
+        description: "Instagram account posts have been downloaded successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to retrieve Instagram content",
+        description: "Failed to retrieve Instagram account data",
         variant: "destructive",
       });
     } finally {
@@ -37,32 +59,23 @@ export const InstagramRepurpose = () => {
     }
   };
 
-  const repurposeContent = async () => {
-    if (!originalContent) {
-      toast({
-        title: "Error",
-        description: "Please download Instagram content first",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const repurposeContent = async (post: InstagramPost) => {
     setIsLoading(true);
     try {
-      const prompt = `Rewrite the following social media content to make it more professional and business-focused, while maintaining the core message: "${originalContent}"`;
+      const prompt = `Rewrite the following Instagram caption to make it more professional and business-focused, while maintaining the core message: "${post.caption}"`;
       
       const newContent = await generateContent(prompt);
       if (newContent) {
         setRepurposedContent(newContent);
         toast({
           title: "Success",
-          description: "Content has been repurposed successfully",
+          description: "Caption has been repurposed successfully",
         });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to repurpose content",
+        description: "Failed to repurpose caption",
         variant: "destructive",
       });
     } finally {
@@ -73,70 +86,85 @@ export const InstagramRepurpose = () => {
   return (
     <Card className="p-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Instagram Content Repurpose</h2>
+        <h2 className="text-xl font-semibold">Instagram Account Content Repurpose</h2>
         <p className="text-sm text-gray-600">
-          Enter an Instagram post URL to download and repurpose its content for your business
+          Enter an Instagram username to download and repurpose all posts for your business
         </p>
 
         <div className="flex gap-2">
           <Input
-            value={instagramUrl}
-            onChange={(e) => setInstagramUrl(e.target.value)}
-            placeholder="Enter Instagram post URL..."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter Instagram username..."
             className="flex-1"
           />
           <Button
-            onClick={() => extractInstagramContent(instagramUrl)}
-            disabled={isLoading || !instagramUrl.trim()}
+            onClick={() => fetchInstagramAccount(username)}
+            disabled={isLoading || !username.trim()}
           >
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Download className="mr-2 h-4 w-4" />
             )}
-            Download
+            Download Account
           </Button>
         </div>
 
-        {originalContent && (
-          <>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Original Content
-              </label>
-              <Textarea
-                value={originalContent}
-                readOnly
-                className="min-h-[100px] bg-gray-50"
-              />
+        {posts.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Available Posts</h3>
+            <div className="grid gap-4">
+              {posts.map((post) => (
+                <Card key={post.id} className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-600">
+                        {new Date(post.timestamp).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm">{post.caption}</p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedPost(post);
+                        repurposeContent(post);
+                      }}
+                      disabled={isLoading}
+                    >
+                      <Wand2 className="mr-2 h-4 w-4" />
+                      Repurpose
+                    </Button>
+                  </div>
+                </Card>
+              ))}
             </div>
+          </div>
+        )}
 
+        {selectedPost && repurposedContent && (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Repurposed Caption
+            </label>
+            <Textarea
+              value={repurposedContent}
+              className="min-h-[100px]"
+              onChange={(e) => setRepurposedContent(e.target.value)}
+            />
             <Button
-              onClick={repurposeContent}
-              disabled={isLoading}
               className="w-full"
+              onClick={() => {
+                toast({
+                  title: "Success",
+                  description: "Caption ready to be reposted to Instagram",
+                });
+              }}
             >
-              {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Wand2 className="mr-2 h-4 w-4" />
-              )}
-              Repurpose Content
+              <Instagram className="mr-2 h-4 w-4" />
+              Prepare for Repost
             </Button>
-
-            {repurposedContent && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Repurposed Content
-                </label>
-                <Textarea
-                  value={repurposedContent}
-                  className="min-h-[100px]"
-                  onChange={(e) => setRepurposedContent(e.target.value)}
-                />
-              </div>
-            )}
-          </>
+          </div>
         )}
       </div>
     </Card>
