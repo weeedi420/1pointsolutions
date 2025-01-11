@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Download, Wand2, Instagram } from "lucide-react";
 import { useContentGeneration } from "@/hooks/useContentGeneration";
-import InstagramScraper from "instagram-scraper-api";
+import instagramScraper from "instagram-scraper-api";
 
 interface InstagramPost {
   id: string;
@@ -27,8 +27,7 @@ export const InstagramRepurpose = () => {
   const fetchInstagramAccount = async (username: string) => {
     setIsLoading(true);
     try {
-      const scraper = new InstagramScraper();
-      const userData = await scraper.getProfile(username);
+      const userData = await instagramScraper.getProfile(username);
       
       if (!userData || !userData.posts) {
         throw new Error("Failed to fetch Instagram data");
