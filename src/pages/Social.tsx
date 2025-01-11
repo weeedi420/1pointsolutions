@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar as CalendarIcon, Clock, Send } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Send, Facebook as FacebookIcon, Twitter as TwitterIcon, Instagram as InstagramIcon } from "lucide-react";
 import { InstagramRepurpose } from "@/components/social/InstagramRepurpose";
 import {
   Popover,
@@ -87,21 +87,21 @@ const Social = () => {
                     variant={selectedPlatforms.includes('facebook') ? 'default' : 'outline'}
                     onClick={() => handlePlatformToggle('facebook')}
                   >
-                    <Facebook className="mr-2 h-4 w-4" />
+                    <FacebookIcon className="mr-2 h-4 w-4" />
                     Facebook
                   </Button>
                   <Button
                     variant={selectedPlatforms.includes('twitter') ? 'default' : 'outline'}
                     onClick={() => handlePlatformToggle('twitter')}
                   >
-                    <Twitter className="mr-2 h-4 w-4" />
+                    <TwitterIcon className="mr-2 h-4 w-4" />
                     Twitter
                   </Button>
                   <Button
                     variant={selectedPlatforms.includes('instagram') ? 'default' : 'outline'}
                     onClick={() => handlePlatformToggle('instagram')}
                   >
-                    <Instagram className="mr-2 h-4 w-4" />
+                    <InstagramIcon className="mr-2 h-4 w-4" />
                     Instagram
                   </Button>
                 </div>
