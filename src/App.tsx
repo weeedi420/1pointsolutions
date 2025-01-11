@@ -14,6 +14,7 @@ import Ads from "./pages/Ads";
 import Social from "./pages/Social";
 import Email from "./pages/Email";
 import SEO from "./pages/SEO";
+import Settings from "./pages/Settings";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/social" element={<Social />} />
             <Route path="/email" element={<Email />} />
             <Route path="/seo" element={<SEO />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
           </Routes>
