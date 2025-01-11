@@ -27,7 +27,7 @@ export const InstagramRepurpose = () => {
   const fetchInstagramAccount = async (username: string) => {
     setIsLoading(true);
     try {
-      const userData = await instagramScraper.getProfile(username);
+      const userData = await instagramScraper.scrapeUserPage(username);
       
       if (!userData || !userData.posts) {
         throw new Error("Failed to fetch Instagram data");
