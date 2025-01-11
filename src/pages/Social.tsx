@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Facebook, Twitter, Instagram, Calendar as CalendarIcon, Clock, Send } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Send } from "lucide-react";
+import { InstagramRepurpose } from "@/components/social/InstagramRepurpose";
 import {
   Popover,
   PopoverContent,
@@ -73,6 +74,7 @@ const Social = () => {
         <Tabs defaultValue="compose" className="w-full">
           <TabsList>
             <TabsTrigger value="compose">Compose</TabsTrigger>
+            <TabsTrigger value="repurpose">Repurpose</TabsTrigger>
             <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
@@ -139,6 +141,10 @@ const Social = () => {
                 </div>
               </div>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="repurpose">
+            <InstagramRepurpose />
           </TabsContent>
 
           <TabsContent value="scheduled">
