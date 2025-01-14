@@ -20,12 +20,7 @@ const JobManagement = () => {
     try {
       const { data: { user }, error } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          data: {
-            role: 'job_admin'
-          }
-        }
+        password
       });
 
       if (error) throw error;
@@ -34,7 +29,7 @@ const JobManagement = () => {
         title: "Success",
         description: "Logged in as Job Management Admin",
       });
-      navigate("/");
+      navigate("/job-dashboard");
     } catch (error: any) {
       toast({
         title: "Error",

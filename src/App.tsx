@@ -1,9 +1,6 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AccessProvider } from "./contexts/AccessContext";
+import { AccessProvider } from "@/contexts/AccessContext";
 import Index from "./pages/Index";
 import Calls from "./pages/Calls";
 import Content from "./pages/Content";
@@ -18,15 +15,14 @@ import Settings from "./pages/Settings";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import JobManagement from "./pages/JobManagement";
+import JobDashboard from "./pages/JobDashboard";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
       <AccessProvider>
-        <Toaster />
-        <Sonner />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -43,11 +39,12 @@ const App = () => (
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/job-management" element={<JobManagement />} />
+            <Route path="/job-dashboard" element={<JobDashboard />} />
           </Routes>
         </BrowserRouter>
       </AccessProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </QueryClientProvider>
+  );
+}
 
 export default App;
