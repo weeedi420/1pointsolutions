@@ -11,6 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import QuickInvoice from "@/components/invoicing/QuickInvoice";
+import BatchInvoicing from "@/components/invoicing/BatchInvoicing";
+import InvoiceReminders from "@/components/invoicing/InvoiceReminders";
 import { 
   CalendarDays, 
   Users, 
@@ -42,22 +46,6 @@ const JobDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Quick Actions */}
-        <div className="flex gap-4 flex-wrap">
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" /> New Job
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" /> Create Invoice
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Users className="h-4 w-4" /> Add Customer
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4" /> Schedule Job
-          </Button>
-        </div>
-
         {/* Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {metrics.map((metric) => (
@@ -73,9 +61,28 @@ const JobDashboard = () => {
           ))}
         </div>
 
-        {/* Main Content */}
+        {/* Invoicing Section */}
+        <Card className="p-6">
+          <Tabs defaultValue="quick" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="quick">Quick Invoice</TabsTrigger>
+              <TabsTrigger value="batch">Batch Invoicing</TabsTrigger>
+              <TabsTrigger value="reminders">Payment Reminders</TabsTrigger>
+            </TabsList>
+            <TabsContent value="quick">
+              <QuickInvoice />
+            </TabsContent>
+            <TabsContent value="batch">
+              <BatchInvoicing />
+            </TabsContent>
+            <TabsContent value="reminders">
+              <InvoiceReminders />
+            </TabsContent>
+          </Tabs>
+        </Card>
+
+        {/* Recent Jobs and Calendar */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Jobs */}
           <Card className="lg:col-span-2 p-6">
             <h2 className="text-xl font-semibold mb-4">Recent Jobs</h2>
             <Table>
@@ -100,7 +107,6 @@ const JobDashboard = () => {
             </Table>
           </Card>
 
-          {/* Calendar */}
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Schedule</h2>
             <Calendar
