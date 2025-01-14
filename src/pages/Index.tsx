@@ -1,130 +1,159 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
-import { Phone, MessageSquare, Image, Search, Users, LineChart, Calendar as CalendarIcon } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Briefcase,
+  Users,
+  Calendar as CalendarIcon,
+  DollarSign,
+} from "lucide-react";
 
 const Index = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [calendarImages, setCalendarImages] = useState<{[key: string]: string}>({});
-  const { toast } = useToast();
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
-  const { data: callStats, isLoading } = useQuery({
-    queryKey: ['callStats'],
-    queryFn: async () => {
-      return {
-        totalCalls: 0,
-        averageDuration: '0:00',
-        leadGenerated: 0,
-      };
-    },
+  // Mock data - replace with actual API calls later
+  const { data: recentJobs } = useQuery({
+    queryKey: ["recentJobs"],
+    queryFn: async () => [
+      {
+        id: 1,
+        customer: "John Doe",
+        service: "Plumbing Repair",
+        status: "In Progress",
+        date: "2024-03-20",
+      },
+      {
+        id: 2,
+        customer: "Jane Smith",
+        service: "HVAC Maintenance",
+        status: "Scheduled",
+        date: "2024-03-21",
+      },
+    ],
   });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && selectedDate) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dateKey = selectedDate.toISOString().split('T')[0];
-        setCalendarImages(prev => ({
-          ...prev,
-          [dateKey]: reader.result as string
-        }));
-        toast({
-          title: "Success",
-          description: "Image added to calendar",
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const stats = [
-    { label: "Total Calls", value: isLoading ? "..." : callStats?.totalCalls || "0", icon: Phone },
-    { label: "Content Generated", value: "0", icon: MessageSquare },
-    { label: "Images Uploaded", value: Object.keys(calendarImages).length.toString(), icon: Image },
-    { label: "Keywords Tracked", value: "0", icon: Search },
-    { label: "Social Mentions", value: "0", icon: Users },
-    { label: "Lead Conversion", value: "0%", icon: LineChart },
+  const metrics = [
+    {
+      title: "Active Jobs",
+      value: "12",
+      icon: Briefcase,
+      trend: "+2 from last week",
+    },
+    {
+      title: "Total Customers",
+      value: "156",
+      icon: Users,
+      trend: "+5 this month",
+    },
+    {
+      title: "Scheduled Jobs",
+      value: "8",
+      icon: CalendarIcon,
+      trend: "Next 7 days",
+    },
+    {
+      title: "Revenue",
+      value: "$12,450",
+      icon: DollarSign,
+      trend: "+15% vs last month",
+    },
   ];
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div className="flex flex-col items-start">
-          <h1 className="text-3xl font-bold text-[#222222]">Welcome to 1Point Solutions</h1>
-          <p className="text-gray-600 mt-2">
-            Your business solutions hub
-          </p>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-500">Welcome to your field service dashboard</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="p-6">
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {metrics.map((metric) => (
+            <Card key={metric.title} className="p-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-[#0FA0CE]/10 rounded-lg">
-                  <stat.icon className="h-6 w-6 text-[#0FA0CE]" />
+                <div className="p-3 bg-blue-100 rounded-lg">
+                  <metric.icon className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    {stat.label}
+                    {metric.title}
                   </p>
-                  <p className="text-2xl font-semibold text-[#222222]">
-                    {stat.value}
+                  <p className="text-2xl font-semibold text-gray-900">
+                    {metric.value}
                   </p>
+                  <p className="text-sm text-gray-500">{metric.trend}</p>
                 </div>
               </div>
             </Card>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Calendar</h2>
-            <div className="flex flex-col space-y-4">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                className="rounded-md border"
-              />
-              {selectedDate && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="cursor-pointer"
-                    />
-                    <Button variant="outline">
-                      <Image className="h-4 w-4 mr-2" />
-                      Add Image
-                    </Button>
-                  </div>
-                  {selectedDate && calendarImages[selectedDate.toISOString().split('T')[0]] && (
-                    <div className="mt-4">
-                      <img
-                        src={calendarImages[selectedDate.toISOString().split('T')[0]]}
-                        alt="Calendar entry"
-                        className="max-w-full h-auto rounded-lg"
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Recent Jobs */}
+          <Card className="lg:col-span-2 p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-semibold">Recent Jobs</h2>
+              <Button variant="outline">View All</Button>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentJobs?.map((job) => (
+                    <TableRow key={job.id}>
+                      <TableCell>{job.customer}</TableCell>
+                      <TableCell>{job.service}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            job.status === "In Progress"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
+                        >
+                          {job.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>{job.date}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </Card>
-          
+
+          {/* Calendar Card */}
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Latest Content</h2>
-            <div className="text-center text-gray-500 py-8">
-              No content generated yet
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-semibold">Schedule</h2>
+              <Button variant="outline">Add Job</Button>
             </div>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-md border"
+            />
           </Card>
         </div>
       </div>
