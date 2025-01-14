@@ -17,6 +17,7 @@ import SEO from "./pages/SEO";
 import Settings from "./pages/Settings";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import JobManagement from "./pages/JobManagement";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
+            <Route path="/job-management" element={<JobManagement />} />
           </Routes>
         </BrowserRouter>
       </AccessProvider>

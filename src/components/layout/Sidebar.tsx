@@ -15,6 +15,7 @@ import {
   Mail,
   Share2,
   Globe,
+  Briefcase,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -24,6 +25,7 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+    { icon: Briefcase, label: "Job Management", path: "/job-management" },
     { icon: Phone, label: "Calls", path: "/calls" },
     { icon: MessageSquare, label: "Content", path: "/content" },
     { icon: Image, label: "Images", path: "/images" },
