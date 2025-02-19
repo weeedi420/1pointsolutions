@@ -29,7 +29,7 @@ export const JobForm = ({ job, onSubmit, onCancel }: JobFormProps) => {
   const [title, setTitle] = useState(job?.title || "");
   const [description, setDescription] = useState(job?.description || "");
   const [status, setStatus] = useState<JobStatus>(job?.status || "pending");
-  const [priority, setPriority] = useState(job?.priority || "medium");
+  const [priority, setPriority] = useState<Job["priority"]>(job?.priority || "medium");
   const [address, setAddress] = useState(job?.location.address || "");
   const [scheduledDate, setScheduledDate] = useState<Date>(
     job?.scheduledFor ? new Date(job?.scheduledFor) : new Date()
@@ -109,7 +109,10 @@ export const JobForm = ({ job, onSubmit, onCancel }: JobFormProps) => {
 
           <div className="space-y-2">
             <Label htmlFor="priority">Priority</Label>
-            <Select value={priority} onValueChange={(value) => setPriority(value)}>
+            <Select 
+              value={priority} 
+              onValueChange={(value: "low" | "medium" | "high" | "emergency") => setPriority(value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
