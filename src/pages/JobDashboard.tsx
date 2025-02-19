@@ -9,6 +9,11 @@ import DispatchMap from "@/components/dispatch/DispatchMap";
 import TeamList from "@/components/dispatch/TeamList";
 import { GoogleAdsImport } from "@/components/ads/GoogleAdsImport";
 import { GoogleLocalServices } from "@/components/ads/GoogleLocalServices";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { JobList } from "@/components/jobs/JobList";
+import { JobForm } from "@/components/jobs/JobForm";
+import type { Job } from "@/types/job";
 
 export type TeamMember = {
   id: string;
@@ -49,20 +54,99 @@ const JobDashboard = () => {
     { lat: 41.8781, lng: -87.6298, title: "Chicago Job Site" }
   ];
 
+  const [showJobForm, setShowJobForm] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<Job | undefined>();
+  
+  const [jobs] = useState<Job[]>([
+    {
+      id: "1",
+      customerId: "cust1",
+      title: "Leaky Faucet Repair",
+      description: "Fix leaking kitchen faucet",
+      status: "pending",
+      priority: "medium",
+      location: {
+        address: "123 Main St, New York, NY",
+        lat: 40.7128,
+        lng: -74.0060
+      },
+      createdAt: new Date().toISOString(),
+      scheduledFor: new Date().toISOString(),
+      notes: [],
+      estimatedCost: 150
+    },
+    {
+      id: "2",
+      customerId: "cust2",
+      title: "Emergency Pipe Burst",
+      description: "Water pipe burst in basement",
+      status: "in_progress",
+      priority: "emergency",
+      location: {
+        address: "456 Park Ave, New York, NY",
+        lat: 40.7589,
+        lng: -73.9851
+      },
+      createdAt: new Date().toISOString(),
+      scheduledFor: new Date().toISOString(),
+      notes: [],
+      estimatedCost: 500
+    }
+  ]);
+
+  const handleEditJob = (job: Job) => {
+    setSelectedJob(job);
+    setShowJobForm(true);
+  };
+
+  const handleDeleteJob = (jobId: string) => {
+    console.log("Deleting job:", jobId);
+  };
+
+  const handleJobSubmit = (jobData: Partial<Job>) => {
+    console.log("Submitting job:", jobData);
+    setShowJobForm(false);
+    setSelectedJob(undefined);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Plumbing CRM Dashboard</h1>
+          <Button onClick={() => setShowJobForm(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create New Job
+          </Button>
         </div>
 
-        <Tabs defaultValue="dispatch" className="w-full">
+        <Tabs defaultValue="jobs" className="w-full">
           <TabsList>
+            <TabsTrigger value="jobs">Jobs</TabsTrigger>
             <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
             <TabsTrigger value="invoicing">Invoicing</TabsTrigger>
             <TabsTrigger value="leads">Google Ads Leads</TabsTrigger>
           </TabsList>
-          
+
+          <TabsContent value="jobs">
+            {showJobForm ? (
+              <JobForm
+                job={selectedJob}
+                onSubmit={handleJobSubmit}
+                onCancel={() => {
+                  setShowJobForm(false);
+                  setSelectedJob(undefined);
+                }}
+              />
+            ) : (
+              <JobList
+                jobs={jobs}
+                onEditJob={handleEditJob}
+                onDeleteJob={handleDeleteJob}
+              />
+            )}
+          </TabsContent>
+
           <TabsContent value="dispatch">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
