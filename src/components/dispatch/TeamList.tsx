@@ -1,17 +1,15 @@
+
 import React from 'react';
 import { User, MapPin, Phone } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import type { TeamMember } from "@/pages/JobDashboard";
 
-interface TeamMember {
-  id: string;
-  name: string;
-  status: 'available' | 'busy' | 'offline';
-  location: string;
-  phone: string;
+interface TeamListProps {
+  members: TeamMember[];
 }
 
-const TeamList = ({ members }: { members: TeamMember[] }) => {
+const TeamList = ({ members }: TeamListProps) => {
   const { toast } = useToast();
 
   const handleAssignJob = (memberId: string) => {
@@ -19,6 +17,19 @@ const TeamList = ({ members }: { members: TeamMember[] }) => {
       title: "Job Assigned",
       description: "Notification sent to team member",
     });
+  };
+
+  const getStatusColor = (status: TeamMember['status']) => {
+    switch (status) {
+      case 'available':
+        return 'bg-green-500';
+      case 'busy':
+        return 'bg-yellow-500';
+      case 'offline':
+        return 'bg-gray-500';
+      default:
+        return 'bg-gray-500';
+    }
   };
 
   return (
@@ -29,10 +40,7 @@ const TeamList = ({ members }: { members: TeamMember[] }) => {
           className="p-4 bg-white rounded-lg shadow-sm border flex items-center justify-between"
         >
           <div className="flex items-center space-x-4">
-            <div className={`w-3 h-3 rounded-full ${
-              member.status === 'available' ? 'bg-green-500' :
-              member.status === 'busy' ? 'bg-yellow-500' : 'bg-gray-500'
-            }`} />
+            <div className={`w-3 h-3 rounded-full ${getStatusColor(member.status)}`} />
             <div>
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4" />

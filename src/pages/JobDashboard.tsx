@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
@@ -8,9 +9,17 @@ import InvoiceReminders from "@/components/invoicing/InvoiceReminders";
 import DispatchMap from "@/components/dispatch/DispatchMap";
 import TeamList from "@/components/dispatch/TeamList";
 
+export type TeamMember = {
+  id: string;
+  name: string;
+  status: 'available' | 'busy' | 'offline';
+  location: string;
+  phone: string;
+};
+
 const JobDashboard = () => {
   // Mock data for demonstration
-  const teamMembers = [
+  const teamMembers: TeamMember[] = [
     {
       id: "1",
       name: "John Smith",
@@ -32,7 +41,7 @@ const JobDashboard = () => {
       location: "South District",
       phone: "(555) 345-6789"
     }
-  ] as const;
+  ];
 
   const locations = [
     { lat: 40.7128, lng: -74.0060, title: "New York Job Site" },
@@ -43,10 +52,15 @@ const JobDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Plumbing CRM Dashboard</h1>
+        </div>
+
         <Tabs defaultValue="dispatch" className="w-full">
           <TabsList>
             <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
             <TabsTrigger value="invoicing">Invoicing</TabsTrigger>
+            <TabsTrigger value="leads">Google Ads Leads</TabsTrigger>
           </TabsList>
           
           <TabsContent value="dispatch">
@@ -84,6 +98,21 @@ const JobDashboard = () => {
                   <InvoiceReminders />
                 </TabsContent>
               </Tabs>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="leads">
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Google Ads Leads</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* We'll implement the GoogleAdsImport and GoogleLocalServices components next */}
+                <Card className="p-4">
+                  <p className="text-gray-500">Google Ads Integration coming soon...</p>
+                </Card>
+                <Card className="p-4">
+                  <p className="text-gray-500">Local Services Ads Integration coming soon...</p>
+                </Card>
+              </div>
             </Card>
           </TabsContent>
         </Tabs>
