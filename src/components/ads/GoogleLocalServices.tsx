@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Settings, Upload } from "lucide-react";
+import { Loader2, Settings, Upload, Sparkles } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -20,6 +20,22 @@ interface LocalServicesData {
   leadQualityScore: string;
 }
 
+const MOCK_LOCAL_SERVICES_DATA: LocalServicesData = {
+  impressions: 15789,
+  clicks: 823,
+  conversions: 142,
+  cost: 3567,
+  leadQualityScore: "Excellent"
+};
+
+const MOCK_OPTIMIZATION_TIPS = `Based on your Local Services Ads performance:
+
+1. Increase budget allocation during peak hours (8-10 AM, 4-6 PM)
+2. Focus on responding to leads within 5 minutes to improve lead quality score
+3. Update business hours to capture more emergency service requests
+4. Add more service categories to expand reach
+5. Improve response rate to maintain "Excellent" quality score`;
+
 export const GoogleLocalServices = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiKey, setApiKey] = useState("");
@@ -27,7 +43,6 @@ export const GoogleLocalServices = () => {
   const [localServicesData, setLocalServicesData] = useState<LocalServicesData | null>(null);
   const [optimizationTips, setOptimizationTips] = useState<string>("");
   const { toast } = useToast();
-  const { generateContent } = useContentGeneration();
 
   const handleConnect = async () => {
     if (!apiKey || !accountId) {
@@ -41,33 +56,11 @@ export const GoogleLocalServices = () => {
 
     setIsLoading(true);
     try {
-      // Store credentials in localStorage
       localStorage.setItem('localServices_apiKey', apiKey);
       localStorage.setItem('localServices_accountId', accountId);
       
-      // Simulate API call with mock data for demonstration
-      const mockData: LocalServicesData = {
-        impressions: Math.floor(Math.random() * 10000),
-        clicks: Math.floor(Math.random() * 1000),
-        conversions: Math.floor(Math.random() * 100),
-        cost: Math.floor(Math.random() * 5000),
-        leadQualityScore: ["Good", "Average", "Excellent"][Math.floor(Math.random() * 3)],
-      };
-      
-      setLocalServicesData(mockData);
-      
-      // Generate optimization tips using Gemini
-      const prompt = `Analyze this Google Local Services Ads data and provide specific recommendations for improvement:
-      - Impressions: ${mockData.impressions}
-      - Clicks: ${mockData.clicks}
-      - Conversions: ${mockData.conversions}
-      - Cost: $${mockData.cost}
-      - Lead Quality Score: ${mockData.leadQualityScore}
-      
-      Provide actionable recommendations to improve performance.`;
-      
-      const tips = await generateContent(prompt);
-      setOptimizationTips(tips || "No recommendations generated");
+      setLocalServicesData(MOCK_LOCAL_SERVICES_DATA);
+      setOptimizationTips(MOCK_OPTIMIZATION_TIPS);
       
       toast({
         title: "Success",
@@ -84,6 +77,15 @@ export const GoogleLocalServices = () => {
     }
   };
 
+  const handleTestData = () => {
+    setLocalServicesData(MOCK_LOCAL_SERVICES_DATA);
+    setOptimizationTips(MOCK_OPTIMIZATION_TIPS);
+    toast({
+      title: "Test Data Loaded",
+      description: "Mock Local Services data has been loaded successfully",
+    });
+  };
+
   return (
     <Card className="p-6 space-y-6">
       <div>
@@ -94,12 +96,12 @@ export const GoogleLocalServices = () => {
       </div>
 
       <Collapsible className="w-full">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <Button
             variant="outline"
             onClick={handleConnect}
             disabled={isLoading}
-            className="flex-1 mr-2"
+            className="flex-1"
           >
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -107,6 +109,14 @@ export const GoogleLocalServices = () => {
               <Upload className="mr-2 h-4 w-4" />
             )}
             {isLoading ? "Connecting..." : "Connect Local Services Ads"}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleTestData}
+            className="flex-none"
+          >
+            <Sparkles className="mr-2 h-4 w-4" />
+            Test Data
           </Button>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -161,7 +171,7 @@ export const GoogleLocalServices = () => {
           {optimizationTips && (
             <Card className="p-4">
               <h3 className="text-lg font-semibold mb-2">AI Optimization Recommendations</h3>
-              <div className="prose prose-sm max-w-none">
+              <div className="prose prose-sm max-w-none whitespace-pre-line">
                 {optimizationTips}
               </div>
             </Card>
