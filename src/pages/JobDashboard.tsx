@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/card";
@@ -8,6 +7,8 @@ import BatchInvoicing from "@/components/invoicing/BatchInvoicing";
 import InvoiceReminders from "@/components/invoicing/InvoiceReminders";
 import DispatchMap from "@/components/dispatch/DispatchMap";
 import TeamList from "@/components/dispatch/TeamList";
+import GoogleAdsImport from "@/components/invoicing/GoogleAdsImport";
+import GoogleLocalServices from "@/components/invoicing/GoogleLocalServices";
 
 export type TeamMember = {
   id: string;
@@ -18,7 +19,6 @@ export type TeamMember = {
 };
 
 const JobDashboard = () => {
-  // Mock data for demonstration
   const teamMembers: TeamMember[] = [
     {
       id: "1",
@@ -102,18 +102,10 @@ const JobDashboard = () => {
           </TabsContent>
 
           <TabsContent value="leads">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Google Ads Leads</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* We'll implement the GoogleAdsImport and GoogleLocalServices components next */}
-                <Card className="p-4">
-                  <p className="text-gray-500">Google Ads Integration coming soon...</p>
-                </Card>
-                <Card className="p-4">
-                  <p className="text-gray-500">Local Services Ads Integration coming soon...</p>
-                </Card>
-              </div>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <GoogleAdsImport onDataImported={(data) => console.log('Imported data:', data)} />
+              <GoogleLocalServices />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
