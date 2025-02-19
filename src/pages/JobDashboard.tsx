@@ -7,8 +7,8 @@ import BatchInvoicing from "@/components/invoicing/BatchInvoicing";
 import InvoiceReminders from "@/components/invoicing/InvoiceReminders";
 import DispatchMap from "@/components/dispatch/DispatchMap";
 import TeamList from "@/components/dispatch/TeamList";
-import GoogleAdsImport from "@/components/invoicing/GoogleAdsImport";
-import GoogleLocalServices from "@/components/invoicing/GoogleLocalServices";
+import { GoogleAdsImport } from "@/components/ads/GoogleAdsImport";
+import { GoogleLocalServices } from "@/components/ads/GoogleLocalServices";
 
 export type TeamMember = {
   id: string;

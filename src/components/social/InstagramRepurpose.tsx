@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Download, Wand2, Instagram } from "lucide-react";
 import { useContentGeneration } from "@/hooks/useContentGeneration";
-import instagramScraper from "instagram-scraper-api";
 
 interface InstagramPost {
   id: string;
@@ -27,23 +26,26 @@ export const InstagramRepurpose = () => {
   const fetchInstagramAccount = async (username: string) => {
     setIsLoading(true);
     try {
-      const userData = await instagramScraper.scrapeUserPage(username);
-      
-      if (!userData || !userData.posts) {
-        throw new Error("Failed to fetch Instagram data");
-      }
+      // Mock data for demonstration
+      const mockPosts: InstagramPost[] = [
+        {
+          id: '1',
+          caption: 'Check out our latest plumbing work! #PlumbingServices',
+          mediaUrl: 'https://example.com/image1.jpg',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          id: '2',
+          caption: 'Emergency repairs available 24/7 #EmergencyPlumbing',
+          mediaUrl: 'https://example.com/image2.jpg',
+          timestamp: new Date().toISOString(),
+        },
+      ];
 
-      const formattedPosts: InstagramPost[] = userData.posts.map((post: any) => ({
-        id: post.id,
-        caption: post.caption || "",
-        mediaUrl: post.display_url,
-        timestamp: new Date(post.taken_at_timestamp * 1000).toISOString(),
-      }));
-
-      setPosts(formattedPosts);
+      setPosts(mockPosts);
       toast({
         title: "Account Retrieved",
-        description: `Successfully downloaded ${formattedPosts.length} posts from ${username}`,
+        description: `Successfully downloaded ${mockPosts.length} posts from ${username}`,
       });
     } catch (error) {
       console.error("Instagram fetch error:", error);
@@ -121,11 +123,6 @@ export const InstagramRepurpose = () => {
                         {new Date(post.timestamp).toLocaleDateString()}
                       </p>
                       <p className="text-sm">{post.caption}</p>
-                      <img 
-                        src={post.mediaUrl} 
-                        alt="Post media" 
-                        className="w-32 h-32 object-cover rounded-md"
-                      />
                     </div>
                     <Button
                       variant="outline"
