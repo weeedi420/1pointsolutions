@@ -13,7 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { JobList } from "@/components/jobs/JobList";
 import { JobForm } from "@/components/jobs/JobForm";
+import { CustomerList } from "@/components/customers/CustomerList";
+import { CustomerForm } from "@/components/customers/CustomerForm";
 import type { Job } from "@/types/job";
+import type { Customer } from "@/types/customer";
 
 export type TeamMember = {
   id: string;
@@ -94,6 +97,47 @@ const JobDashboard = () => {
     }
   ]);
 
+  const [showCustomerForm, setShowCustomerForm] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>();
+  
+  const [customers] = useState<Customer[]>([
+    {
+      id: "1",
+      name: "John Smith",
+      email: "john.smith@email.com",
+      phone: "07700 900123",
+      address: "123 Main St, London",
+      createdAt: new Date().toISOString(),
+      lastJobDate: new Date().toISOString(),
+      totalSpent: 2500,
+      jobHistory: [
+        {
+          id: "1",
+          title: "Bathroom Installation",
+          date: new Date().toISOString(),
+          cost: 2500
+        }
+      ]
+    },
+    {
+      id: "2",
+      name: "Sarah Johnson",
+      email: "sarah.j@email.com",
+      phone: "07700 900456",
+      address: "456 High St, Manchester",
+      createdAt: new Date().toISOString(),
+      totalSpent: 750,
+      jobHistory: [
+        {
+          id: "2",
+          title: "Boiler Repair",
+          date: new Date().toISOString(),
+          cost: 750
+        }
+      ]
+    }
+  ]);
+
   const handleEditJob = (job: Job) => {
     setSelectedJob(job);
     setShowJobForm(true);
@@ -109,24 +153,70 @@ const JobDashboard = () => {
     setSelectedJob(undefined);
   };
 
+  const handleEditCustomer = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setShowCustomerForm(true);
+  };
+
+  const handleDeleteCustomer = (customerId: string) => {
+    console.log("Deleting customer:", customerId);
+  };
+
+  const handleCustomerSubmit = (customerData: Partial<Customer>) => {
+    console.log("Submitting customer:", customerData);
+    setShowCustomerForm(false);
+    setSelectedCustomer(undefined);
+  };
+
+  const handleCallCustomer = (phone: string) => {
+    console.log("Calling customer:", phone);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Plumbing CRM Dashboard</h1>
-          <Button onClick={() => setShowJobForm(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create New Job
-          </Button>
+          <div className="space-x-2">
+            <Button onClick={() => setShowCustomerForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Customer
+            </Button>
+            <Button onClick={() => setShowJobForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Job
+            </Button>
+          </div>
         </div>
 
-        <Tabs defaultValue="jobs" className="w-full">
+        <Tabs defaultValue="customers" className="w-full">
           <TabsList>
+            <TabsTrigger value="customers">Customers</TabsTrigger>
             <TabsTrigger value="jobs">Jobs</TabsTrigger>
             <TabsTrigger value="dispatch">Dispatch</TabsTrigger>
             <TabsTrigger value="invoicing">Invoicing</TabsTrigger>
             <TabsTrigger value="leads">Google Ads Leads</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="customers">
+            {showCustomerForm ? (
+              <CustomerForm
+                customer={selectedCustomer}
+                onSubmit={handleCustomerSubmit}
+                onCancel={() => {
+                  setShowCustomerForm(false);
+                  setSelectedCustomer(undefined);
+                }}
+              />
+            ) : (
+              <CustomerList
+                customers={customers}
+                onEditCustomer={handleEditCustomer}
+                onDeleteCustomer={handleDeleteCustomer}
+                onCallCustomer={handleCallCustomer}
+              />
+            )}
+          </TabsContent>
 
           <TabsContent value="jobs">
             {showJobForm ? (
